@@ -110,4 +110,18 @@ def binary_search(key, lst):
 
     return -1
 
+def sort3num(a, b, c):
+    '''
+    return ascending three numbers.
+    >>> sort3num(3, 2, 1)
+    (1, 2, 3)
+    '''
 
+    if a > b:
+        a, b = b, a
+    if a > c:
+        a, c = c, a
+    if b > c:
+        b, c = c, b
+    
+    return a, b, c
