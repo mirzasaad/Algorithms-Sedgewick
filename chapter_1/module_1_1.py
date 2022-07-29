@@ -125,3 +125,40 @@ def sort3num(a, b, c):
         b, c = c, b
     
     return a, b, c
+
+def exR1(number):
+    if number <= 0:
+        return ''
+    return exR1(number - 3) + str(number) + exR1(number - 2) + str(number)
+
+# 1.1.29 practice
+def rank(key, lst):
+    '''
+    Return the rank of the key in the given list, there may be duplicated keys.
+    >>> rank(3, [1, 2, 3, 3, 3, 3, 3, 3, 4, 5, 6, 7, 8, 9, 10])
+    2
+    >>> rank(4, [1, 2, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5])
+    4
+    '''
+
+    assert isinstance(key, int)
+    assert isinstance(lst, (list, tuple))
+
+    lo, hi = 0, len(lst) - 1
+
+    while lo <= hi:
+        mid = int((lo + hi) / 2)
+        if (lst[mid] == key):
+            index = mid
+            while lst[index] == key:
+                index -=1
+            return index + 1
+        elif key < lst[mid]:
+            hi = mid - 1
+        elif key > lst[mid]:
+            lo = mid + 1
+
+    return -1
+
+print(rank(3, [1, 2, 3, 3, 3, 3, 3, 3, 4, 5, 6, 7, 8, 9, 10]))
+print(rank(5, [1, 2, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5]))
