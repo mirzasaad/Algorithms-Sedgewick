@@ -1,7 +1,6 @@
 
 
-from unicodedata import numeric
-
+import doctest
 
 def gcd(p, q):
     '''
@@ -61,7 +60,7 @@ def sqrt(number):
     if (number == 0 or number == 1):
         return number
 
-    i, result = 1, 1
+    i, result = 1.0, 1.0
     while (result <= number):
         i += 1
         result = i * i
@@ -160,5 +159,5 @@ def rank(key, lst):
 
     return -1
 
-print(rank(3, [1, 2, 3, 3, 3, 3, 3, 3, 4, 5, 6, 7, 8, 9, 10]))
-print(rank(5, [1, 2, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5]))
+if __name__ == '__main__':
+    doctest.testmod()
