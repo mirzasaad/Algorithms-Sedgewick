@@ -7,12 +7,12 @@ import doctest
 
 
 # 1.3.31 practice
-class LinkedList(object):
+class DoublyLinkedList(object):
 
     """
       The double-node linked list implementation
     which the node has prev and next attribute.
-    >>> lst = LinkedList()
+    >>> lst = DoublyLinkedList()
     >>> lst.push_back(1)
     >>> lst.push_front(2)
     >>> for i in lst:
