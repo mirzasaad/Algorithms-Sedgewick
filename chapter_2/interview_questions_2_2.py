@@ -1,11 +1,6 @@
-
-
-
 import doctest
 from typing import List
-
 from common import Node
-
 
 class MergeWithSmallAux(object):
     """
