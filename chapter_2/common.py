@@ -144,3 +144,38 @@ class Color(IntEnum):
     Red = 0
     White = 1
     Blue = 2
+
+class Cube(object):
+    
+    def __init__(self, i, j):
+        self._sum = i ** 3 + j ** 3
+        self.i = i
+        self.j = j
+
+    def __cmp__(self, other):
+        if self._sum < other._sum:
+            return -1
+        elif self._sum > other._sum:
+            return 1
+        return 0
+
+    def __eq__(self, other):
+        return self.__cmp__(other) == 0
+
+    def __ne__(self, other):
+        return self.__cmp__(other) != 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __ge__(self, other):
+        return self.__cmp__(other) >= 0
+
+    def __le__(self, other):
+        return self.__cmp__(other) <= 0
+
+    def __str__(self):
+        return '({}^3 + {}^3 == {})'.format(self.i, self.j, self._sum)

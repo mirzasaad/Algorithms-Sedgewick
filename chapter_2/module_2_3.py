@@ -206,8 +206,6 @@ class QuickSelectMedianArray(object):
 
         return None
             
-        
-
     def median(self, lst):
         result = []
         length = len(lst)
