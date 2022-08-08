@@ -1,12 +1,9 @@
 from copy import deepcopy
 import enum
 from queue import Queue
-
-
 class Color(enum.IntEnum):
     RED = 0
     BLACK = 1
-
 
 class Node(object):
 
@@ -16,6 +13,24 @@ class Node(object):
         self._val = val
         self._size = size
         self._color = color
+        self._max = 0
+        self._height = 0
+
+    @property
+    def height(self):
+        return self._height
+
+    @max.setter
+    def height(self, height):
+        self._height = height
+
+    @property
+    def max(self):
+        return self._max
+
+    @max.setter
+    def color(self, max):
+        self._max = max
 
     @property
     def color(self):
@@ -99,8 +114,6 @@ class Node(object):
 
     def __repr__(self) -> str:
         return '{}'.format(self._val)
-
-
 class Interval():
     def __init__(self, min, max):
         assert min <= max
@@ -151,8 +164,6 @@ class Interval():
 
     def __repr__(self):
         return 'Interval(%s, %s)' % (self.min, self.max)
-
-
 class SegmentHV():
     def __init__(self, x1, y1, x2, y2):
         assert x1 <= x2 and y1 <= y2
@@ -211,12 +222,10 @@ class SegmentHV():
         #     return 'Horizontal Line' if h else 'Vertical Line'
         return "[Point(%s, %s) ,Point(%s, %s)]" % (self.x1, self.y1, self.x2, self.y2)
 
-
 def display_bst(root):
     lines, *_ = _display_aux(root)
     for line in lines:
         print(line)
-
 
 def _display_aux(self):
     """Returns list of strings, width, height, and horizontal coordinate of the root."""
