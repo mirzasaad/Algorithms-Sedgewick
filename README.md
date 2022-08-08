@@ -10,4 +10,4 @@ symbol table missing
 
 practice mossris traversal postorder
 2 - 3 tree missing
-
+segment tree for sum

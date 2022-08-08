@@ -1,94 +1,11 @@
 from collections import namedtuple, deque
 import doctest
 import string
-from common import Interval
+
+# from common.avl_node import AVLNode
+from common import Interval, AVLNode
 
 NodeWithBalanceStatus = namedtuple('NodeWithBalanceStatus', 'status, height')
-
-class Node():
-    def __init__(self, key, value, size=1, height=0):
-        self._left = self._right = None
-        self._key = key
-        self._value = value
-        self._size = size
-        self._height = height
-
-    @property
-    def height(self):
-        return self._height
-
-    @height.setter
-    def height(self, height):
-        self._height = height
-
-    @property
-    def left(self):
-        return self._left
-
-    @left.setter
-    def left(self, node):
-        assert isinstance(node, (Node, type(None)))
-        self._left = node
-
-    @property
-    def right(self):
-        return self._right
-
-    @right.setter
-    def right(self, node):
-        assert isinstance(node, (Node, type(None)))
-        self._right = node
-
-    @property
-    def size(self):
-        return self._size
-
-    @size.setter
-    def size(self, value):
-        assert isinstance(value, int) and value >= 0
-        self._size = value
-
-    @property
-    def key(self):
-        return self._key
-
-    @key.setter
-    def key(self, value):
-        self._key = value
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        self._value = value
-
-    def __cmp__(self, other):
-        return self.key - other.key
-
-    def __eq__(self, other):
-        return self.__cmp__(other) == 0
-
-    def __ne__(self, other):
-        return self.__cmp__(other) != 0
-
-    def __gt__(self, other):
-        return self.__cmp__(other) > 0
-
-    def __lt__(self, other):
-        return self.__cmp__(other) < 0
-
-    def __ge__(self, other):
-        return self.__cmp__(other) >= 0
-
-    def __le__(self, other):
-        return self.__cmp__(other) <= 0
-
-    def __repr__(self):
-        return '(key => %s, height => %s, size => %s)' % (self.key, self.height, self.size)
-
-
 class AVL():
     """
     >>> avl = AVL()
@@ -180,6 +97,9 @@ class AVL():
     def minimum_value(self):
         return self.__minimum_value(self.root)
 
+    def __max(self, node):
+        return node._max if node else float('-inf')
+
     def __update(self, node, update_height=True, update_size=True):
         if update_size:
             node.size = 1 + \
@@ -187,6 +107,7 @@ class AVL():
         if update_height:
             node.height = 1 + max(self.__height(node.left),
                                   self.__height(node.right))
+        node.max = max(self.__max(node.left), self.__max(node.right), node.max)
 
     def __rotate_left(self, node):
         rotate_node = node.right
@@ -226,7 +147,11 @@ class AVL():
 
     def __put(self, node, key, value):
         if not node:
-            new_node = Node(key, value)
+            new_node = AVLNode(key, value, 1, 0)
+
+            if isinstance(key, Interval):
+                new_node._max = key.max
+
             self.last_visited = new_node
             return new_node
         if key < node.key:
@@ -484,7 +409,6 @@ class AVL():
         if interval.max > node.key:
             self.__range(node.right, interval, result)
 
-
 def traverse(root, d):
     if root:
         d['preorder'].append(root.key)
@@ -494,5 +418,5 @@ def traverse(root, d):
         d['postorder'].append(root.key)
     return d
 
-if __name__ == '__main__':
-    doctest.testmod()
+# if __name__ == '__main__':
+#     doctest.testmod()
