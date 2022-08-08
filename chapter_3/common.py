@@ -1,14 +1,29 @@
 from copy import deepcopy
+import enum
 from queue import Queue
+
+
+class Color(enum.IntEnum):
+    RED = 0
+    BLACK = 1
 
 
 class Node(object):
 
-    def __init__(self, key, val, size):
+    def __init__(self, key, val, size, color=Color.BLACK):
         self._left = self._right = None
         self._key = key
         self._val = val
         self._size = size
+        self._color = color
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, color):
+        self._color = color
 
     @property
     def left(self):
@@ -86,7 +101,118 @@ class Node(object):
         return '{}'.format(self._val)
 
 
-def display(root):
+class Interval():
+    def __init__(self, min, max):
+        assert min <= max
+        self.min = min
+        self.max = max
+
+    def interesects(self, other):
+        if other.max >= self.min and other.min <= self.max:
+            return True
+        return False
+
+    def contains(self, x):
+        return self.min < x < self.max
+
+    def contains_eq(self, x):
+        return x <= self.max and x >= self.min
+
+    def __cmp__(self, other):
+
+        if self.min < other.min:
+            return -1
+        elif self.min > other.min:
+            return 1
+        elif self.max < other.max:
+            return -1
+        elif self.max > other.max:
+            return 1
+        else:
+            return 0
+
+    def __eq__(self, other):
+        return self.__cmp__(other) == 0
+
+    def __ne__(self, other):
+        return self.__cmp__(other) != 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __ge__(self, other):
+        return self.__cmp__(other) >= 0
+
+    def __le__(self, other):
+        return self.__cmp__(other) <= 0
+
+    def __repr__(self):
+        return 'Interval(%s, %s)' % (self.min, self.max)
+
+
+class SegmentHV():
+    def __init__(self, x1, y1, x2, y2):
+        assert x1 <= x2 and y1 <= y2
+        # assert not (x1 == x2 and y1 == y2)
+        self.x1 = x1
+        self.x2 = x2
+        self.y1 = y1
+        self.y2 = y2
+
+    def is_horizontal(self):
+        return self.y1 == self.y2
+
+    def is_vertical(self):
+        return self.x1 == self.x2
+
+    def __cmp__(self, other):
+        if self.y1 < other.y1:
+            return -1
+        elif self.y1 > other.y2:
+            return 1
+        elif self.y2 < other.y2:
+            return -1
+        elif self.y2 > other.y2:
+            return 1
+        elif self.x1 < other.x1:
+            return -1
+        elif self.x1 > other.x1:
+            return 1
+        elif self.x2 < other.x2:
+            return -1
+        elif self.x2 > other.x2:
+            return 1
+        return 0
+
+    def __eq__(self, other):
+        return self.__cmp__(other) == 0
+
+    def __ne__(self, other):
+        return self.__cmp__(other) != 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __ge__(self, other):
+        return self.__cmp__(other) >= 0
+
+    def __le__(self, other):
+        return self.__cmp__(other) <= 0
+
+    def __repr__(self):
+        # h, v = self.is_horizontal(), self.is_vertical()
+        # if h or v:
+        #     return 'Horizontal Line' if h else 'Vertical Line'
+        return "[Point(%s, %s) ,Point(%s, %s)]" % (self.x1, self.y1, self.x2, self.y2)
+
+
+def display_bst(root):
     lines, *_ = _display_aux(root)
     for line in lines:
         print(line)

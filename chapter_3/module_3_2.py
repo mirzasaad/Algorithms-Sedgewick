@@ -1,9 +1,9 @@
 from collections import deque
 import doctest
 import random
+import string
 
-from numpy import maximum
-from common import Node, display
+from common import Node
 
 # notes
 # for delete
@@ -387,11 +387,6 @@ class BST(object):
         else:
             return self.__min_val(node.left)
 
-        # if not node.left:
-        #     return node
-
-        # return self.__min_val(node.left)
-
     def min_val(self):
         return self.__min_val(self._root)
 
@@ -521,16 +516,3 @@ class BST(object):
 
 if __name__ == '__main__':
     doctest.testmod()
-# bst = BST()
-
-# insert = ['S', 'E', 'X', 'A', 'R', 'C', 'H', 'M']
-# for i in insert:
-#     bst.put(i)
-
-# display(bst._root)
-# print(bst.keys())
-# print(bst.size())
-# print(bst.floor('G'))
-# print(bst.rank('R'))
-# print(bst.select(3))
-# print(bst.__min_val(bst._root))
