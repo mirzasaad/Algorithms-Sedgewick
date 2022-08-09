@@ -335,7 +335,7 @@ class Rect(object):
     def xmin(self):
         return self._xmin
 
-    @max.setter
+    @xmin.setter
     def xmin(self, xmin):
         self._xmin = xmin
 
@@ -343,7 +343,7 @@ class Rect(object):
     def ymin(self):
         return self._ymin
 
-    @max.setter
+    @ymin.setter
     def ymin(self, ymin):
         self._ymin = ymin
 
@@ -351,7 +351,7 @@ class Rect(object):
     def xmax(self):
         return self._xmax
 
-    @max.setter
+    @xmax.setter
     def xmax(self, xmax):
         self._xmax = xmax
 
@@ -359,7 +359,7 @@ class Rect(object):
     def ymax(self):
         return self._ymax
 
-    @max.setter
+    @ymax.setter
     def ymax(self, ymax):
         self._ymax = ymax
 
@@ -367,26 +367,33 @@ class Rect(object):
         return self.xmax >= other.xmin and self.ymax >= other.ymin and other.xmax >= self.xmin and other.ymax >= self.ymin
 
     def contains(self, p):
-        return (p.x() >= self.xmin) and (p.x() <= self.xmax) and (p.y() >= self.ymin) and (p.y() <= self.ymax);
+        return (p.x() >= self.xmin) and (p.x() <= self.xmax) and (p.y() >= self.ymin) and (p.y() <= self.ymax)
 
     def distanceTo(self, p):
-        return sqrt(self.distanceSquaredTo(p));
+        return sqrt(self.distanceSquaredTo(p))
 
     def distanceSquaredTo(self, p):
         dx = 0.0
         dy = 0.0
-        if      (p.x() < self.xmin): dx = p.x() - self.xmin;
-        elif    (p.x() > self.xmax): dx = p.x() - self.xmax;
-        if      (p.y() < self.ymin): dy = p.y() - self.ymin;
-        elif    (p.y() > self.ymax): dy = p.y() - self.ymax;
-        return dx*dx + dy*dy;
-
+        if (p.x() < self.xmin):
+            dx = p.x() - self.xmin
+        elif (p.x() > self.xmax):
+            dx = p.x() - self.xmax
+        if (p.y() < self.ymin):
+            dy = p.y() - self.ymin
+        elif (p.y() > self.ymax):
+            dy = p.y() - self.ymax
+        return dx*dx + dy*dy
 
     def __cmp__(self, other):
-        if (self.xmin != other.xmin): return 0;
-        if (self.ymin != other.ymin): return 0;
-        if (self.xmax != other.xmax): return 0;
-        if (self.ymax != other.ymax): return 0;
+        if (self.xmin != other.xmin):
+            return 0
+        if (self.ymin != other.ymin):
+            return 0
+        if (self.xmax != other.xmax):
+            return 0
+        if (self.ymax != other.ymax):
+            return 0
         return 1
 
     def __cmp__(self, other):
@@ -409,17 +416,26 @@ class Rect(object):
 
     def __le__(self, other):
         return self.__cmp__(other) <= 0
+
+    def __repr__(self) -> str:
+        return 'rect[{}, {}, {}, {}]'.format(self.xmin, self.ymin, self.xmax, self.ymax)
+
+
 class Point2D():
     def __init__(self, x, y):
         self._x = x
         self._y = y
 
     def __cmp__(self, other):
-        if (self.y < other.y): return -1;
-        if (self.y > other.y): return +1;
-        if (self.x < other.x): return -1;
-        if (self.x > other.x): return +1;
-        return 0;
+        if (self.y < other.y):
+            return -1
+        if (self.y > other.y):
+            return +1
+        if (self.x < other.x):
+            return -1
+        if (self.x > other.x):
+            return +1
+        return 0
 
     def __eq__(self, other):
         return self.__cmp__(other) == 0
@@ -441,6 +457,44 @@ class Point2D():
 
     def __repr__(self):
         return 'Interval(%s, %s)' % (self.min, self.max)
+
+
+class Event():
+    """
+        Represent A Line segment Event occured durinf line sweep algorithm
+    """
+
+    def __init__(self, time, segment, position):
+        self.segment: SegmentHV = segment
+        self.time = time
+        self.position = position
+
+    def __cmp__(self, other):
+        if self.time < other.time:
+            return -1
+        elif self.time > other.time:
+            return 1
+        else:
+            return 0
+
+    def __eq__(self, other):
+        return self.__cmp__(other) == 0
+
+    def __ne__(self, other):
+        return self.__cmp__(other) != 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __ge__(self, other):
+        return self.__cmp__(other) >= 0
+
+    def __le__(self, other):
+        return self.__cmp__(other) <= 0
+
 
 def display_bst(root):
     lines, *_ = _display_aux(root)

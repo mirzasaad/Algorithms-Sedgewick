@@ -40,8 +40,8 @@ class IntervalSearchTree(AVL):
         if node.right and node.max >= interval.max:
             self.__search_intersection(node.right, interval, result)
 
-    def search_intersection(self, interval: Interval) -> List[Interval]:
-        result: List[Interval] = []
+    def search_intersection(self, interval: Interval) -> List[AVLNode]:
+        result: List[AVLNode] = []
         self.__search_intersection(self.root, interval, result)
         return result
 

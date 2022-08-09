@@ -7,46 +7,7 @@ from matplotlib import pyplot as plt
 import avl
 import heapq
 from avl import AVL
-from common import SegmentHV
-
-
-class Event():
-    """
-        Represent A Line segment Event occured durinf line sweep algorithm
-    """
-
-    def __init__(self, time, segment, position):
-        self.segment: SegmentHV = segment
-        self.time = time
-        self.position = position
-
-    def __cmp__(self, other):
-        if self.time < other.time:
-            return -1
-        elif self.time > other.time:
-            return 1
-        else:
-            return 0
-
-    def __eq__(self, other):
-        return self.__cmp__(other) == 0
-
-    def __ne__(self, other):
-        return self.__cmp__(other) != 0
-
-    def __gt__(self, other):
-        return self.__cmp__(other) > 0
-
-    def __lt__(self, other):
-        return self.__cmp__(other) < 0
-
-    def __ge__(self, other):
-        return self.__cmp__(other) >= 0
-
-    def __le__(self, other):
-        return self.__cmp__(other) <= 0
-
-
+from common import SegmentHV, Event
 class SweepLine(object):
     """
         Sweep Line Algo
@@ -102,7 +63,7 @@ class SweepLine(object):
                 heapq.heappush(pq, e)
             elif segment.is_horizontal():
                 e1 = Event(-segment.x1, segment, 'start')
-                e2 = Event(-segment.x2, segment, 'start')
+                e2 = Event(-segment.x2, segment, 'end')
                 heapq.heappush(pq, e1)
                 heapq.heappush(pq, e2)
         
@@ -121,7 +82,7 @@ class SweepLine(object):
 
             elif sweep == -segment.x1 and position == 'start':
                 self._bst.insert(segment.y1, segment)
-            elif position == 'end':
-                self._bst.remove(segment.y1)
+            # elif position == 'end':
+            #     self._bst.remove(segment.y1)
 
 sl = SweepLine(10)

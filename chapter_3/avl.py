@@ -191,6 +191,8 @@ class AVL():
         return self.__balance(node)
 
     def __delete(self, node, key):
+        if not node:
+            return None
         if key < node.key:
             node.left = self.__delete(node.left,  key)
         elif key > node.key:
