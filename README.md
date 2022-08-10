@@ -11,3 +11,4 @@ symbol table missing
 practice mossris traversal postorder
 2 - 3 tree missing
 segment tree for sum
+fix kdtree visalizer and performance is slow bas comapred to bst look into it

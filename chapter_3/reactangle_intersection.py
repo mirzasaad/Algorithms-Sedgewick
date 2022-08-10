@@ -12,7 +12,6 @@ from common import SegmentHV, Event, Rect, Interval
 from itertools import cycle
 cycol = cycle('bgrcmk')
 
-
 class SweepLine(object):
     """
         Sweep Line Algo
