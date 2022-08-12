@@ -8,6 +8,11 @@ import avl
 import heapq
 from avl import AVL
 from common import SegmentHV, Event
+
+######################################
+######################################
+######################################
+# NOTE heapq is min heap but the implementation is for max heap, fixit
 class SweepLine(object):
     """
         Sweep Line Algo

@@ -2,8 +2,10 @@
 from cgitb import reset
 import collections
 import enum
+import heapq
 from multiprocessing import dummy
 from os import curdir
+import queue
 import re
 import string
 from typing import List, Optional
@@ -936,3 +938,144 @@ def reorderList(head: Optional[ListNode]) -> None:
         second_head_2 = head2.next
         head2.next = head1
         head2 = second_head_2
+
+def removeNthFromEnd(head: Optional[ListNode], n: int) -> Optional[ListNode]:
+    """
+    Question 22
+
+    Remove Nth Node From End of List
+
+    Given the head of a linked list, remove the nth node from the end of the list and return its head.
+    """
+    if not n:
+        return head
+
+    slow, fast = head, head
+
+    for _ in range(n):
+        fast = fast.next
+
+    if not fast:
+        return head.next
+
+    while fast.next:
+        slow = slow.next
+        fast = fast.next
+
+    slow.next = slow.next.next 
+
+    return head
+
+def hasCycle(head: Optional[ListNode]) -> bool:
+    """
+    Question 23
+
+    Linked List Cycle
+
+    Given head, the head of a linked list, determine if the linked list has a cycle in it.
+    There is a cycle in a linked list if there is some node in the list that can be reached
+    again by continuously following the next pointer. Internally, pos is used to denote the index of the 
+    node that tail's next pointer is connected to. Note that pos is not passed as a parameter.
+    Return true if there is a cycle in the linked list. Otherwise, return false.
+    """
+    slow, fast = head, head
+
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        
+        if slow is fast:
+            return True
+    return False
+
+def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+    """
+    Question 24
+
+    Input: lists = [[1,4,5],[1,3,4],[2,6]]
+    Output: [1,1,2,3,4,4,5,6]
+    Explanation: The linked-lists are:
+    [
+    1->4->5,
+    1->3->4,
+    2->6
+    ]
+    merging them into one sorted list:
+    1->1->2->3->4->4->5->6
+    """
+
+    counter = collections.Counter()
+    combined = ListNode(-1)
+    combined_head = combined
+
+    min_node = collections.namedtuple('smallest', 'index node')
+
+    while len(counter) != len(lists):
+        smallest = None
+        for index, head in enumerate(lists):
+            if not head:
+                counter[index] = 1
+                continue
+            if not smallest or smallest.node.val >= head.val:
+                smallest = min_node(index, head)
+
+        if smallest:
+            combined.next = ListNode(smallest.node.val)
+            combined = combined.next
+            lists[smallest.index] = lists[smallest.index].next
+
+    return combined_head.next        
+
+def mergeKListsFast(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+    """
+    Question 24
+
+    Input: lists = [[1,4,5],[1,3,4],[2,6]]
+    Output: [1,1,2,3,4,4,5,6]
+    Explanation: The linked-lists are:
+    [
+    1->4->5,
+    1->3->4,
+    2->6
+    ]
+    merging them into one sorted list:
+    1->1->2->3->4->4->5->6
+    """
+    queue = []
+    head = current = ListNode(-1)
+    count = 0;
+    # using count for tie breaker
+
+    for linked_list in lists:
+        if linked_list:
+            count += 1
+            heapq.heappush(queue, (linked_list.val, count, linked_list))
+
+    while queue:
+        _, _, current.next = heapq.heappop(queue)
+        print(current.next.val)
+        current = current.next
+
+        if current.next:
+            count += 1
+            heapq.heappush(queue, (current.next.val, count, current.next))
+
+    return head.next
+
+lst = [
+    ListNode(1, ListNode(4, ListNode(5))),
+    ListNode(1, ListNode(3, ListNode(7))),
+    ListNode(2, ListNode(6))
+]
+
+# print(mergeKListsFast(lists=lst))
+
+queue = []
+
+heapq.heappush(queue, (1, 3, 'third'))
+heapq.heappush(queue, (1, 2, 'second'))
+heapq.heappush(queue, (1, 1, 'first'))
+
+print(heapq.heappop(queue))
+print(heapq.heappop(queue))
+print(heapq.heappop(queue))

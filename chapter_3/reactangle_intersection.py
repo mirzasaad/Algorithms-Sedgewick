@@ -12,6 +12,11 @@ from common import SegmentHV, Event, Rect, Interval
 from itertools import cycle
 cycol = cycle('bgrcmk')
 
+######################################
+######################################
+######################################
+# NOTE heapq is min heap but the implementation is for max heap, fixit
+
 class SweepLine(object):
     """
         Sweep Line Algo
