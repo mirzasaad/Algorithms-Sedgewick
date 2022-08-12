@@ -1,0 +1,938 @@
+
+from cgitb import reset
+import collections
+import enum
+from multiprocessing import dummy
+from os import curdir
+import re
+import string
+from typing import List, Optional
+
+# https://neetcode.io/
+
+class ListNode(object):
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+    def __repr__(self) -> str:
+        return 'ListNode({} -> {})'.format(self.val, self.next)
+
+def containsDuplicate_2(nums: List[int]) -> bool:
+    """
+    Question 1
+
+    Contains Duplicate
+
+    Given an integer array nums, return true if any value appears at least 
+    twice in the array, and return false if every element is distinct.
+    """
+    nums.sort()
+
+    for i in range(len(nums) - 1):
+        if nums[i] == nums[i + 1]:
+            return True
+
+    return False
+
+
+def containsDuplicate(nums: List[int]) -> bool:
+    """
+    Question 1
+
+    Contains Duplicate
+
+    Given an integer array nums, return true if any value appears at least 
+    twice in the array, and return false if every element is distinct.
+    """
+    _dict = dict()
+    for i in range(len(nums)):
+        if nums[i] in _dict:
+            return True
+        else:
+            _dict[nums[i]] = True
+
+    return False
+
+
+def containsDuplicateFast(nums: List[int]) -> bool:
+    return len(set(nums)) == len(nums)
+
+
+def isAnagram(s: str, t: str) -> bool:
+    """
+    Question 2
+
+    Valid Anagram
+
+    Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+    An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, 
+    typically using all the original letters exactly once.
+    """
+    if len(s) != len(t):
+        return False
+
+    s.sort()
+    t.sort()
+
+    for i in range(len(s) - 1):
+        if s[i] != t[i]:
+            return False
+
+    return True
+
+
+def isAnagram(s: str, t: str):
+    """
+    Question 2
+
+    Valid Anagram
+
+    Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+    An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, 
+    typically using all the original letters exactly once.
+    """
+    return all([s.count(charactar) == t.count(charactar) for charactar in string.ascii_lowercase])
+
+
+def twoSum(nums: List[int], target: int) -> List[int]:
+    """
+    Question 3
+
+    Two Sum
+
+    Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+    You may assume that each input would have exactly one solution, and you may not use the same element twice.
+    You can return the answer in any order.
+    """
+
+    table = dict()
+    for idx, num in enumerate(nums):
+        table[target - num] = idx
+
+    for idx, num in enumerate(nums):
+        if num in table and table[num] != idx:
+            return [table[num], idx]
+
+    return []
+
+
+def twoSumFast(nums: List[int], target: int) -> List[int]:
+    """
+    Question 3
+
+    Two Sum
+
+    Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+    You may assume that each input would have exactly one solution, and you may not use the same element twice.
+    You can return the answer in any order.
+    """
+
+    table = dict()
+    for idx, num in enumerate(nums):
+        value = target - num
+
+        if value in table:
+            return [table[value], idx]
+
+        table[num] = idx
+
+    return []
+
+
+def groupAnagrams(strs: List[str]) -> List[List[str]]:
+    """
+    Question 4
+
+    Group Anagrams
+
+    Given an array of strings strs, group the anagrams together. 
+    You can return the answer in any order.
+    An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, 
+    typically using all the original letters exactly once.
+    """
+
+    table = {}
+
+    for _, str in enumerate(strs):
+        _str = ''.join(sorted(str))
+        if _str in table:
+            table[_str].append(str)
+        else:
+            table[_str] = [str]
+
+    results = []
+
+    for i in table:
+        results.append(table[i])
+
+    return results
+
+
+def groupAnagramsFast(strs: List[str]) -> List[List[str]]:
+    """
+    Question 4
+
+    Group Anagrams
+
+    Given an array of strings strs, group the anagrams together. 
+    You can return the answer in any order.
+    An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, 
+    typically using all the original letters exactly once.
+    """
+    look = collections.defaultdict(list)
+
+    for s in strs:
+        look[tuple(sorted(s))].append(s)
+    return look.values()
+
+
+def topKFrequent(nums: List[int], k: int) -> List[int]:
+    """
+    Question 5
+
+    Top K Frequent Elements
+
+    Given an integer array nums and an integer k, 
+    return the k most frequent elements. 
+    You may return the answer in any order.
+    """
+    table = {}
+
+    for num in nums:
+        if num in table:
+            table[num] += 1
+        else:
+            table[num] = 1
+
+    result = []
+
+    for key in table.keys():
+        if table[key] >= k:
+            result.append(key)
+
+    return result
+
+
+def topKFrequent_2(nums: List[int], k: int) -> List[int]:
+    """
+    Question 5
+
+    Top K Frequent Elements
+
+    Given an integer array nums and an integer k, 
+    return the k most frequent elements. 
+    You may return the answer in any order.
+    """
+    counter = dict(collections.Counter(nums))
+
+    length = len(nums)
+    feq = collections.defaultdict(list)
+
+    for key, count in counter.items():
+        feq[count].append(key)
+
+    result = []
+
+    for i in reversed(range(length + 1)):
+        if i in feq:
+            result.extend(feq[i])
+        if len(result) == k:
+            break
+
+    return result
+
+
+def productExceptSelf(nums: List[int]) -> List[int]:
+    """
+    Question 6
+
+    Product of Array Except Self
+
+    Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].
+    The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+    You must write an algorithm that runs in O(n) time and without using the division operation.
+
+    take prefix and siffix products and then multiply them
+    """
+    length = len(nums)
+    pref, suff = [1] * length, [1] * length
+
+    current = 1
+    for i in range(1, length):
+        pref[i] = nums[i - 1] * current
+        current = nums[i - 1] * current
+
+    current = 1
+    for j in reversed(range(0, length - 1)):
+        suff[j] = nums[j + 1] * current
+        current = nums[j + 1] * current
+
+    prod = [-1] * length
+
+    for i in range(length):
+        prod[i] = pref[i] * suff[i]
+
+    return prod
+
+
+def encode(strs: List[str]) -> str:
+    """
+    Question 7
+
+    Encode and Decode Strings
+
+    Design an algorithm to encode a list of strings to a string. 
+    The encoded string is then sent over the network and is 
+    decoded back to the original list of strings.
+    """
+
+    encoded = ""
+
+    for st in strs:
+        encoded += '{}:{}'.format(len(st), st)
+
+    return encoded
+
+
+def decode(encoded: str) -> List[str]:
+    """
+    Question 7
+
+    Encode and Decode Strings
+
+    Design an algorithm to encode a list of strings to a string. 
+    The encoded string is then sent over the network and is 
+    decoded back to the original list of strings.
+    """
+
+    index = 0
+    N = len(encoded)
+    result = []
+    while index < N:
+        count = ''
+
+        while encoded[index] != ':':
+            count += encoded[index]
+            index += 1
+
+        index += 1
+        count = int(count)
+
+        j = index
+        new_str = ''
+        while j < index + count:
+            new_str += encoded[j]
+            j += 1
+
+        index += count
+        result.append(new_str)
+
+    return result
+
+
+def longestConsecutive(nums: List[int]) -> int:
+    """
+    Question 8
+
+    Given an unsorted array of integers nums, 
+    return the length of the longest consecutive elements sequence.
+    You must write an algorithm that runs in O(n) time.
+    """
+
+    nums.sort()
+
+    i, N = 0, len(nums)
+    max_count = 0
+    current = 0
+    for i in range(N - 1):
+        if nums[i + 1] - nums[i] == 1:
+            current += 1
+        else:
+            current = 0
+
+        max_count = max(current + 1, max_count)
+
+    return max_count
+
+
+def longestConsecutiveFast(nums: List[int]) -> int:
+    """
+    Question 8
+
+    Given an unsorted array of integers nums, 
+    return the length of the longest consecutive elements sequence.
+    You must write an algorithm that runs in O(n) time.
+    """
+
+    table = set(nums)
+    max_count = 0
+
+    for num in table:
+        if num + 1 not in table:
+            curr_num = num
+            count = 1
+
+            while curr_num - 1 in table:
+                count += 1
+                curr_num -= 1
+
+            max_count = max(max_count, count)
+
+    return max_count
+
+
+def isPalindrome(s: str) -> bool:
+    """
+    Question 9
+
+    Valid Palindrome
+
+    A phrase is a palindrome if, after converting all uppercase letters 
+    into lowercase letters and removing all non-alphanumeric characters, 
+    it reads the same forward and backward. Alphanumeric characters include letters and numbers.
+    Given a string s, return true if it is a palindrome, or false otherwise.
+    """
+    if not s:
+        return False
+
+    i, j = 0, len(s) - 1
+
+    while i < j:
+        while i < j and not s[i].isalnum():
+            i += 1
+
+        while j > i and not s[j].isalnum():
+            j -= 1
+
+        if i == j:
+            break
+
+        if s[i].lower() != s[j].lower():
+            return False
+
+        i += 1
+        j -= 1
+
+    return True
+
+
+def binary_search(lst, key):
+    lo, hi = 0, len(lst) - 1
+
+    while lo <= hi:
+        mid = int((hi + lo) / 2)
+        if lst[mid] == key:
+            return mid
+        elif key < lst[mid]:
+            hi = mid - 1
+        else:
+            lo = mid + 1
+
+    return -1
+
+
+def threeSumFast(nums: List[int]) -> List[List[int]]:
+    """
+    Question 10
+
+    3Sum
+
+    Given an integer array nums, return all the triplets 
+    [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
+    Notice that the solution set must not contain duplicate triplets.
+    """
+    N = len(nums)
+    results = []
+
+    for i in range(N):
+        for j in range(i + 1, N):
+            k = binary_search(nums, -nums[i] - nums[j])
+            if k > j:
+                results.append([i, j, k])
+
+    return results
+
+
+def threeSum(nums: List[int]) -> List[List[int]]:
+    """
+    Question 10
+
+    3Sum
+
+    Given an integer array nums, return all the triplets 
+    [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
+    Notice that the solution set must not contain duplicate triplets.
+    """
+    N = len(nums)
+    results = []
+
+    nums.sort()
+
+    for i in range(N - 2):
+
+        if i > 0 and nums[i] == nums[i - 1]:
+            # remove first pointer duplicates
+            continue
+
+        start = i + 1
+        end = N - 1
+        a = nums[i]
+
+        while start < end:
+            b, c = nums[start], nums[end]
+
+            if a + b + c == 0:
+                results.append([a, b, c])
+
+                # remove duplicates
+                while start < end and nums[start] == nums[start + 1]:
+                    start += 1
+                while end > start and nums[end] == nums[end - 1]:
+                    end -= 1
+
+                start += 1
+                end -= 1
+            elif a + b + c < 0:
+                start += 1
+            else:
+                end -= 1
+
+    return results
+
+
+def maxArea(height: List[int]) -> int:
+    """
+    Question 11
+
+    Container With Most Water
+
+    You are given an integer array height of length n. 
+    There are n vertical lines drawn such that the two endpoints of the 
+    ith line are (i, 0) and (i, height[i]).
+    Find two lines that together with the x-axis form a container, 
+    such that the container contains the most water.
+    Return the maximum amount of water a container can store.
+    """
+
+    max_area = 0
+
+    i, j = 0, len(height) - 1
+
+    while i < j:
+        distance = j - i
+        __height = min(height[i], height[j])
+        area = distance * __height
+
+        if height[i] < height[j]:
+            i += 1
+        else:
+            j -= 1
+
+        max_area = max(max_area, area)
+
+    return max_area
+
+
+def maxProfit(prices: List[int]) -> int:
+    """
+    Question 12
+
+    Best Time to Buy and Sell Stock
+
+    You are given an array prices where prices[i] is the 
+    price of a given stock on the ith day.
+    You want to maximize your profit by choosing a single day 
+    to buy one stock and choosing a different day 
+    in the future to sell that stock.
+    Return the maximum profit you can achieve from this transaction. 
+    If you cannot achieve any profit, return 0.
+    """
+
+    max_profit = 0
+    min_so_far = (1 << 63) - 1
+
+    for price in prices:
+        min_so_far = min(min_so_far, price)
+        max_profit = max(max_profit, price - min_so_far)
+
+    return max_profit
+
+
+def lengthOfLongestSubstring(s: str) -> int:
+    """
+    Question 13
+
+    Longest Substring Without Repeating Characters
+
+    Given a string s, find the length of the longest substring without repeating characters.
+    """
+
+    start = 0
+    end = 0
+    duplciate = False
+    count = collections.Counter()
+    max_seq = 0
+
+    for end, ch in enumerate(s):
+        count[ch] += 1
+        if count[ch] > 1:
+            duplciate = True
+
+        while duplciate:
+            temp = s[start]
+
+            if count[temp] > 1:
+                duplciate = False
+
+            count[temp] -= 1
+            start += 1
+
+        max_seq = max(max_seq, end - start + 1)
+
+    return max_seq
+
+
+count, start, length = collections.Counter(), 0, 0
+
+
+def characterReplacement_2(s: str, k: int) -> int:
+    """
+    Question 14
+
+    Longest Substring Without Repeating Characters
+
+    Given a string s, find the length of the longest substring without repeating characters.
+    """
+    count, start, length = [0] * 26, 0, 0
+    most_common_count = 0
+
+    for end, ch in enumerate(s):
+        count[ch - 'A'] += 1
+        most_common_count = max(count[ch - 'A'], most_common_count)
+        distance = end - start + 1
+
+        while distance - most_common_count > k:
+            count[s[start] - 'A'] -= 1
+            start += 1
+
+        length = max(length, end - start + 1)
+
+
+def characterReplacement(s: str, k: int) -> int:
+    """
+    Question 14
+
+    Longest Substring Without Repeating Characters
+
+    Given a string s, find the length of the longest substring without repeating characters.
+    """
+    count, start, length = collections.Counter(), 0, 0
+
+    for end, st in enumerate(s):
+        count[st] += 1
+        most_common = count.most_common(1)[0][1]
+        distance = end - start + 1
+
+        while distance - most_common > k:
+            distance = end - start + 1
+            count[s[start]] -= 1
+            start += 1
+
+        length = max(length, end - start + 1)
+
+    return length
+
+
+def minWindow(text: str, pattern: str) -> str:
+    """
+    Question 15
+
+    Minimum Window Substring
+
+    Given two strings s and t of lengths m and n respectively, 
+    return the minimum window substring of s such that every character in t (including duplicates) is 
+    included in the window. If there is no such substring, return the empty string "".
+    The testcases will be generated such that the answer is unique.
+    A substring is a contiguous sequence of characters within the string.
+    """
+    if len(pattern) > len(text):
+        return ''
+
+    Index = collections.namedtuple('Index', 'start length')
+
+    start, end, dict = 0, 0, collections.Counter(pattern)
+    substr = Index(0, 1 << 31)
+    count = len(dict)
+
+    while end < len(text):
+        char = text[end]
+        if char in dict:
+            dict[char] -= 1
+            if dict[char] == 0:
+                count -= 1
+
+        end += 1
+
+        while count == 0:
+            temp_char = text[start]
+            if temp_char in dict:
+                dict[temp_char] += 1
+
+                if dict[temp_char] > 0:
+                    count += 1
+
+            distance = end - start
+
+            if substr.length > distance:
+                substr = Index(start, distance)
+
+            start += 1
+
+    if substr.length == 1 << 31:
+        return ''
+
+    return text[substr.start:substr.start+substr.length]
+
+
+def isValid(s: str) -> bool:
+    """
+    Question 16
+
+    Valid Parentheses
+
+    Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+    An input string is valid if:
+    Open brackets must be closed by the same type of brackets.
+    Open brackets must be closed in the correct order.
+    """
+    stack = []
+    lookup = {'{': '}', '[': ']', '(': ')'}
+
+    for bracket in s:
+        if bracket in lookup:
+            stack.append(s)
+        elif not stack or lookup[stack.pop()] != bracket:
+            return False
+
+    return True
+
+
+def searchFast(nums: List[int], target: int) -> int:
+    """
+    Question 17
+
+    Search in Rotated Sorted Array
+
+    There is an integer array nums sorted in ascending order (with distinct values).
+    Prior to being passed to your function, nums is possibly rotated at an unknown pivot 
+    index k (1 <= k < nums.length) such that the resulting array is 
+    [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]] (0-indexed). 
+    For example, [0,1,2,4,5,6,7] might be rotated at pivot index 3 and become [4,5,6,7,0,1,2].
+    Given the array nums after the possible rotation and an integer target,
+     return the index of target if it is in nums, or -1 if it is not in nums.
+    You must write an algorithm with O(log n) runtime complexity.
+    """
+    N = len(nums)
+    lo, hi = 0, N - 1
+
+    while lo < hi:
+        mid = lo + ((hi-lo)//2)
+        if nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi = mid
+
+    rotation, lo, hi = lo, 0, N-1
+
+    while lo <= hi:
+        mid = lo + ((hi-lo)//2)
+        realmid = (mid+rotation) % N
+        if nums[realmid] == target:
+            return realmid
+        if target > nums[realmid]:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+
+
+def search(nums: List[int], target: int) -> int:
+    """
+    Question 17
+
+    Search in Rotated Sorted Array
+
+    There is an integer array nums sorted in ascending order (with distinct values).
+    Prior to being passed to your function, nums is possibly rotated at an unknown pivot 
+    index k (1 <= k < nums.length) such that the resulting array is 
+    [nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]] (0-indexed). 
+    For example, [0,1,2,4,5,6,7] might be rotated at pivot index 3 and become [4,5,6,7,0,1,2].
+    Given the array nums after the possible rotation and an integer target,
+     return the index of target if it is in nums, or -1 if it is not in nums.
+    You must write an algorithm with O(log n) runtime complexity.
+    """
+
+    def findPivot(nums):
+        lo, hi = 0, len(nums) - 1
+
+        while lo < hi:
+            mid = (lo + hi) // 2
+
+            if mid < hi and nums[mid] > nums[mid + 1]:
+                return mid + 1
+            if mid < lo and nums[mid] < nums[mid - 1]:
+                return mid
+
+            if nums[lo] >= nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+
+        return 0
+
+    N = len(nums)
+    rotation = findPivot(nums)
+    lo, hi = 0, N - 1
+    
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        realmid = (mid + rotation) % N
+
+        if nums[realmid] == target:
+            return realmid
+        elif target < nums[realmid]:
+            hi = mid - 1
+        else:
+            lo = mid + 1
+        
+    return -1
+
+def findMin(nums: List[int]) -> int:
+    """
+    Question 18
+
+    Find Minimum in Rotated Sorted Array
+
+    Suppose an array of length n sorted in ascending order is rotated between 1 and n times. For example, the array nums = [0,1,2,4,5,6,7] might become:
+    [4,5,6,7,0,1,2] if it was rotated 4 times.
+    [0,1,2,4,5,6,7] if it was rotated 7 times.
+    Notice that rotating an array [a[0], a[1], a[2], ..., a[n-1]] 1 time results in the array [a[n-1], a[0], a[1], a[2], ..., a[n-2]].
+    Given the sorted rotated array nums of unique elements, return the minimum element of this array.
+    You must write an algorithm that runs in O(log n) time.
+    """
+
+    def findPivot():
+        lo, hi = 0, len(nums) - 1
+
+        while lo < hi:
+            mid = (lo + hi) // 2
+
+            if mid < hi and nums[mid] > nums[mid + 1]:
+                return mid + 1
+            
+            if lo < mid and nums[mid] < nums[mid - 1]:
+                return mid
+
+            if nums[lo] >= nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+
+        return 0
+
+    pivot = findPivot()
+    
+    return nums[pivot] if pivot < len(nums) else None
+
+def reverseList(head: Optional[ListNode]) -> Optional[ListNode]:
+    """
+    Question 19
+
+    Reverse Linked List
+
+    Given the head of a singly linked list, reverse the list, and return the reversed list.
+    """
+    if not head:
+        return head
+
+    current = head
+    prev_node = None
+
+    while current:
+        second_node = current.next
+        current.next = prev_node
+        prev_node = current
+        current = second_node
+    
+    return prev_node
+
+def mergeTwoLists(list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+    """
+    Question 20
+
+    Merge Two Sorted Lists
+
+    You are given the heads of two sorted linked lists list1 and list2.
+    Merge the two lists in a one sorted list. The list should be made by splicing together the nodes of the first two lists.
+    Return the head of the merged linked list.
+    """
+    
+    dummy = ListNode(0)
+    head = dummy
+
+    while list1 and list2:
+        if list1.val <= list2.val:
+            dummy.next = ListNode(list1.val)
+            list1 = list1.next
+        elif list2.val < list1.val:
+            dummy.next = ListNode(list2.val)
+            list2 = list2.next    
+        dummy = dummy.next
+
+    longer_list = list1 or list2
+
+    while longer_list:
+        dummy.next = ListNode(longer_list.val)
+        longer_list = longer_list.next
+        dummy = dummy.next
+
+    return head.next
+
+def reorderList(head: Optional[ListNode]) -> None:
+    """
+    Question 21
+
+    Reorder List
+
+    You are given the head of a singly linked-list. The list can be represented as:
+    L0 → L1 → … → Ln - 1 → Ln
+    Reorder the list to be on the following form:
+    L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+    """
+    
+    slow, fast = head, head
+
+    while fast.next and fast.next.next:
+        slow = slow.next
+        fast = fast.next.next
+
+    prev, current = None, slow.next
+
+    while current:
+        second = current.next
+        current.next = prev
+        prev = current
+        current = second
+
+    slow.next = None
+    head1, head2 = head, prev
+
+    while head2:
+        second_head_1 = head1.next
+        head1.next = head2
+        head1 = second_head_1
+
+        second_head_2 = head2.next
+        head2.next = head1
+        head2 = second_head_2
