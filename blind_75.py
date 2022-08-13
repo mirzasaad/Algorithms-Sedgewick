@@ -1445,34 +1445,34 @@ def kthSmallestMorris(root: Optional[TreeNode], k: int) -> int:
 
     return None
 
-# def buildTree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
-#     """
-#     Question 35
+def buildTree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+    """
+    Question 35
 
-#     Construct Binary Tree from Preorder and Inorder Traversal
+    Construct Binary Tree from Preorder and Inorder Traversal
 
-#     Given two integer arrays preorder and inorder where preorder is the preorder 
-#     traversal of a binary tree and inorder is the inorder traversal of the same tree, 
-#     construct and return the binary tree.
-#     """
-#     current = iter(preorder)
-#     inorder_map = {}
+    Given two integer arrays preorder and inorder where preorder is the preorder 
+    traversal of a binary tree and inorder is the inorder traversal of the same tree, 
+    construct and return the binary tree.
+    """
+    current = iter(preorder)
+    inorder_map = {}
     
-#     for index, value in enumerate(inorder):
-#         inorder_map[value] = index
+    for index, value in enumerate(inorder):
+        inorder_map[value] = index
     
-#     def __build(lo, hi):
-#         if lo > hi:
-#             return None
+    def __build(lo, hi):
+        if lo > hi:
+            return None
         
-#         node = TreeNode(next(current))
-#         mid = inorder_map[node.val]
-#         node.left = __build(lo, mid - 1)
-#         node.right = __build(mid + 1, hi)
+        node = TreeNode(next(current))
+        mid = inorder_map[node.val]
+        node.left = __build(lo, mid - 1)
+        node.right = __build(mid + 1, hi)
 
-#         return node
+        return node
     
-#     return __build(0, len(inorder) - 1)
+    return __build(0, len(inorder) - 1)
 
 # def maxPathSum(root: Optional[TreeNode]) -> int:
 #     """
