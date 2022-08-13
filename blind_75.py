@@ -1199,45 +1199,45 @@ def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
     return dfs(root, subRoot)
 
 
-# def isSubtreeFast(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
-#     """
-#     Question 28
+def isSubtreeFast(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+    """
+    Question 28
 
-#     Subtree of Another Tree
+    Subtree of Another Tree
 
-#     Given the roots of two binary trees root and subRoot, return true if there is a 
-#     subtree of root with the same structure and node values of subRoot and false otherwise.
-#     A subtree of a binary tree tree is a tree that consists of a node in tree and all of 
-#     this node's descendants. The tree tree could also be considered as a subtree of itself.
-#     """
-#     def __hash(node: TreeNode):
-#         s = sha256()
-#         s.update(str(node.val))
-#         return s.digest()
+    Given the roots of two binary trees root and subRoot, return true if there is a 
+    subtree of root with the same structure and node values of subRoot and false otherwise.
+    A subtree of a binary tree tree is a tree that consists of a node in tree and all of 
+    this node's descendants. The tree tree could also be considered as a subtree of itself.
+    """
+    def __hash(node: TreeNode):
+        s = sha256()
+        s.update(str(node.val))
+        return s.digest()
 
-#     def __merkel(node: Optional[TreeNode]):
-#         if not node:
-#             return '#'
+    def __merkel(node: Optional[TreeNode]):
+        if not node:
+            return '#'
 
-#         left = __merkel(node.left)
-#         right = __merkel(node.right)
+        left = __merkel(node.left)
+        right = __merkel(node.right)
 
-#         node.merkel = left + __hash(node) + right
+        node.merkel = left + __hash(node) + right
 
-#         return node.merkel
+        return node.merkel
 
-#     __merkel(root)
-#     __merkel(subRoot)
+    __merkel(root)
+    __merkel(subRoot)
 
-#     def dfs(root: Optional[TreeNode], subRoot: Optional[TreeNode]):
-#         if not root:
-#             return False
+    def dfs(root: Optional[TreeNode], subRoot: Optional[TreeNode]):
+        if not root:
+            return False
 
-#         isEqual = root.merkel == subRoot.merkel
+        isEqual = root.merkel == subRoot.merkel
 
-#         return isEqual or dfs(root.left) or dfs(root.right)
+        return isEqual or dfs(root.left) or dfs(root.right)
 
-#     return dfs(root, subRoot)
+    return dfs(root, subRoot)
 
 
 # def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
