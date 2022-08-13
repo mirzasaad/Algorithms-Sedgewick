@@ -1474,50 +1474,42 @@ def buildTree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
     
     return __build(0, len(inorder) - 1)
 
-# def maxPathSum(root: Optional[TreeNode]) -> int:
-#     """
-#     Question 36
+def maxPathSum(root: Optional[TreeNode]) -> int:
+    """
+    Question 36
 
-#     Binary Tree Maximum Path Sum
+    Binary Tree Maximum Path Sum
 
-#     A path in a binary tree is a sequence of nodes where each pair of 
-#     adjacent nodes in the sequence has an edge connecting them. A node can only 
-#     appear in the sequence at most once. Note that the path does not need to pass through the root.
-#     The path sum of a path is the sum of the node's values in the path.
-#     Given the root of a binary tree, return the maximum path sum of any non-empty path.
-#     """
-#     result = [root.val]
+    A path in a binary tree is a sequence of nodes where each pair of 
+    adjacent nodes in the sequence has an edge connecting them. A node can only 
+    appear in the sequence at most once. Note that the path does not need to pass through the root.
+    The path sum of a path is the sum of the node's values in the path.
+    Given the root of a binary tree, return the maximum path sum of any non-empty path.
+    """
+    result = [root.val]
 
-#     def __maxPathSum(node: Optional[TreeNode]):
-#         if not node:
-#             return 0
+    def __maxPathSum(node: Optional[TreeNode]):
+        if not node:
+            return 0
 
-#         left = __maxPathSum(node.left)
-#         right = __maxPathSum(node.right)
+        left = __maxPathSum(node.left)
+        right = __maxPathSum(node.right)
 
-#         left_max = max(0, left)
-#         right_max = max(0, right)
+        left_max = max(0, left)
+        right_max = max(0, right)
 
-#         max_without_split = node.val + left_max + right_max
-#         max_node = node.val
-#         max_node_plus_left = node.val + left_max
-#         max_node_plus_right = node.val + right_max
+        max_without_split = node.val + left_max + right_max
+        max_node = node.val
+        max_node_plus_left = node.val + left_max
+        max_node_plus_right = node.val + right_max
 
-#         result[0] = max(result[0], max_without_split, max_node, max_node_plus_left, max_node_plus_right)
+        result[0] = max(result[0], max_without_split, max_node, max_node_plus_left, max_node_plus_right)
 
-#         max_with_split = node.val + max(left_max, right_max)
+        max_with_split = node.val + max(left_max, right_max)
         
-#         return max_with_split
+        return max_with_split
 
-#     __maxPathSum(root)
+    __maxPathSum(root)
 
-#     return result[-1]
+    return result[-1]
 
-
-
-
-
-
-# root = TreeNode(-10, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))
-
-# print(maxPathSum(TreeNode(-3)))
