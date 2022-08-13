@@ -1110,27 +1110,27 @@ def invertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
     return __invertTree(root)
 
 
-# def maxDepth(root: Optional[TreeNode]) -> int:
-#     """
-#     Question 26
+def maxDepth(root: Optional[TreeNode]) -> int:
+    """
+    Question 26
 
-#     Maximum Depth of Binary Tree
+    Maximum Depth of Binary Tree
 
-#     Given the root of a binary tree, return its maximum depth.
-#     A binary tree's maximum depth is the number of nodes along the 
-#     longest path from the root node down to the farthest leaf node.
-#     """
+    Given the root of a binary tree, return its maximum depth.
+    A binary tree's maximum depth is the number of nodes along the 
+    longest path from the root node down to the farthest leaf node.
+    """
 
-#     def __maxDepth(node: Optional[TreeNode]) -> int:
-#         if not node:
-#             return 0
+    def __maxDepth(node: Optional[TreeNode]) -> int:
+        if not node:
+            return 0
 
-#         left = __maxDepth(node.left)
-#         right = __maxDepth(node.right)
+        left = __maxDepth(node.left)
+        right = __maxDepth(node.right)
 
-#         return 1 + max(left, right)
+        return 1 + max(left, right)
 
-#     return __maxDepth(root)
+    return __maxDepth(root)
 
 
 # def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
