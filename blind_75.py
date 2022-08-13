@@ -2,15 +2,18 @@
 from cgitb import reset
 import collections
 import enum
+from hashlib import sha256
 import heapq
 from multiprocessing import dummy
 from os import curdir
 import queue
 import re
 import string
+from turtle import right, rt
 from typing import List, Optional
 
 # https://neetcode.io/
+
 
 class ListNode(object):
     def __init__(self, val=0, next=None):
@@ -19,6 +22,19 @@ class ListNode(object):
 
     def __repr__(self) -> str:
         return 'ListNode({} -> {})'.format(self.val, self.next)
+
+
+class TreeNode(object):
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+    def __repr__(self) -> str:
+        return 'TreeNode({})'.format(self.val)
+    # def __repr__(self) -> str:
+    #     return 'TreeNode({} <- {} -> {})'.format(self.left, self.val, self.right)
+
 
 def containsDuplicate_2(nums: List[int]) -> bool:
     """
@@ -796,7 +812,7 @@ def search(nums: List[int], target: int) -> int:
     N = len(nums)
     rotation = findPivot(nums)
     lo, hi = 0, N - 1
-    
+
     while lo <= hi:
         mid = (lo + hi) // 2
         realmid = (mid + rotation) % N
@@ -807,8 +823,9 @@ def search(nums: List[int], target: int) -> int:
             hi = mid - 1
         else:
             lo = mid + 1
-        
+
     return -1
+
 
 def findMin(nums: List[int]) -> int:
     """
@@ -832,7 +849,7 @@ def findMin(nums: List[int]) -> int:
 
             if mid < hi and nums[mid] > nums[mid + 1]:
                 return mid + 1
-            
+
             if lo < mid and nums[mid] < nums[mid - 1]:
                 return mid
 
@@ -844,8 +861,9 @@ def findMin(nums: List[int]) -> int:
         return 0
 
     pivot = findPivot()
-    
+
     return nums[pivot] if pivot < len(nums) else None
+
 
 def reverseList(head: Optional[ListNode]) -> Optional[ListNode]:
     """
@@ -866,8 +884,9 @@ def reverseList(head: Optional[ListNode]) -> Optional[ListNode]:
         current.next = prev_node
         prev_node = current
         current = second_node
-    
+
     return prev_node
+
 
 def mergeTwoLists(list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
     """
@@ -879,7 +898,7 @@ def mergeTwoLists(list1: Optional[ListNode], list2: Optional[ListNode]) -> Optio
     Merge the two lists in a one sorted list. The list should be made by splicing together the nodes of the first two lists.
     Return the head of the merged linked list.
     """
-    
+
     dummy = ListNode(0)
     head = dummy
 
@@ -889,7 +908,7 @@ def mergeTwoLists(list1: Optional[ListNode], list2: Optional[ListNode]) -> Optio
             list1 = list1.next
         elif list2.val < list1.val:
             dummy.next = ListNode(list2.val)
-            list2 = list2.next    
+            list2 = list2.next
         dummy = dummy.next
 
     longer_list = list1 or list2
@@ -900,6 +919,7 @@ def mergeTwoLists(list1: Optional[ListNode], list2: Optional[ListNode]) -> Optio
         dummy = dummy.next
 
     return head.next
+
 
 def reorderList(head: Optional[ListNode]) -> None:
     """
@@ -912,7 +932,7 @@ def reorderList(head: Optional[ListNode]) -> None:
     Reorder the list to be on the following form:
     L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
     """
-    
+
     slow, fast = head, head
 
     while fast.next and fast.next.next:
@@ -939,6 +959,7 @@ def reorderList(head: Optional[ListNode]) -> None:
         head2.next = head1
         head2 = second_head_2
 
+
 def removeNthFromEnd(head: Optional[ListNode], n: int) -> Optional[ListNode]:
     """
     Question 22
@@ -962,9 +983,10 @@ def removeNthFromEnd(head: Optional[ListNode], n: int) -> Optional[ListNode]:
         slow = slow.next
         fast = fast.next
 
-    slow.next = slow.next.next 
+    slow.next = slow.next.next
 
     return head
+
 
 def hasCycle(head: Optional[ListNode]) -> bool:
     """
@@ -983,10 +1005,11 @@ def hasCycle(head: Optional[ListNode]) -> bool:
     while fast and fast.next:
         slow = slow.next
         fast = fast.next.next
-        
+
         if slow is fast:
             return True
     return False
+
 
 def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
     """
@@ -1024,7 +1047,8 @@ def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
             combined = combined.next
             lists[smallest.index] = lists[smallest.index].next
 
-    return combined_head.next        
+    return combined_head.next
+
 
 def mergeKListsFast(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
     """
@@ -1043,7 +1067,7 @@ def mergeKListsFast(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
     """
     queue = []
     head = current = ListNode(-1)
-    count = 0;
+    count = 0
     # using count for tie breaker
 
     for linked_list in lists:
@@ -1053,7 +1077,6 @@ def mergeKListsFast(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
 
     while queue:
         _, _, current.next = heapq.heappop(queue)
-        print(current.next.val)
         current = current.next
 
         if current.next:
@@ -1062,20 +1085,263 @@ def mergeKListsFast(lists: List[Optional[ListNode]]) -> Optional[ListNode]:
 
     return head.next
 
-lst = [
-    ListNode(1, ListNode(4, ListNode(5))),
-    ListNode(1, ListNode(3, ListNode(7))),
-    ListNode(2, ListNode(6))
-]
 
-# print(mergeKListsFast(lists=lst))
+def invertTree(root: Optional[TreeNode]) -> Optional[TreeNode]:
+    """
+    Question 25
 
-queue = []
+    Invert Binary Tree
 
-heapq.heappush(queue, (1, 3, 'third'))
-heapq.heappush(queue, (1, 2, 'second'))
-heapq.heappush(queue, (1, 1, 'first'))
+    Given the root of a binary tree, invert the tree, and return its root.
+    """
 
-print(heapq.heappop(queue))
-print(heapq.heappop(queue))
-print(heapq.heappop(queue))
+    def __invertTree(node: Optional[TreeNode]) -> Optional[TreeNode]:
+        if not node:
+            return node
+
+        right = __invertTree(node.left)
+        left = __invertTree(node.right)
+
+        node.left = right
+        node.right = left
+
+        return node
+
+    return __invertTree(root)
+
+
+# def maxDepth(root: Optional[TreeNode]) -> int:
+#     """
+#     Question 26
+
+#     Maximum Depth of Binary Tree
+
+#     Given the root of a binary tree, return its maximum depth.
+#     A binary tree's maximum depth is the number of nodes along the 
+#     longest path from the root node down to the farthest leaf node.
+#     """
+
+#     def __maxDepth(node: Optional[TreeNode]) -> int:
+#         if not node:
+#             return 0
+
+#         left = __maxDepth(node.left)
+#         right = __maxDepth(node.right)
+
+#         return 1 + max(left, right)
+
+#     return __maxDepth(root)
+
+
+# def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+#     """
+#     Question 27
+
+#     Same Tree
+
+#     Given the roots of two binary trees p and q, write a function to check if they are the same or not.
+#     Two binary trees are considered the same if they are structurally identical, and the nodes have the same value.
+#     """
+
+#     def __isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> int:
+#         if not p and not q:
+#             return True
+
+#         if p or q:
+#             return False
+
+#         if p.val != q.val:
+#             return False
+
+#         left = __isSameTree(p.left, q.left)
+#         right = __isSameTree(p.right, q.right)
+
+#         return left and right
+
+#     return __isSameTree(p, q)
+
+
+# def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+#     """
+#     Question 28
+
+#     Subtree of Another Tree
+
+#     Given the roots of two binary trees root and subRoot, return true if there is a 
+#     subtree of root with the same structure and node values of subRoot and false otherwise.
+#     A subtree of a binary tree tree is a tree that consists of a node in tree and all of 
+#     this node's descendants. The tree tree could also be considered as a subtree of itself.
+#     """
+#     def __isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> int:
+#         if not p and not q:
+#             return True
+
+#         if p or q:
+#             return False
+
+#         if p.val != q.val:
+#             return False
+
+#         left = __isSameTree(p.left, q.left)
+#         right = __isSameTree(p.right, q.right)
+
+#         return left and right
+
+#     def dfs(p: Optional[TreeNode], q: Optional[TreeNode]):
+#         if not p:
+#             return False
+
+#         if p.val == q.val and __isSameTree(p, q):
+#             return True
+
+#         return dfs(p.left, q) or dfs(p.right, q)
+
+#     return dfs(root, subRoot)
+
+
+# def isSubtreeFast(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+#     """
+#     Question 28
+
+#     Subtree of Another Tree
+
+#     Given the roots of two binary trees root and subRoot, return true if there is a 
+#     subtree of root with the same structure and node values of subRoot and false otherwise.
+#     A subtree of a binary tree tree is a tree that consists of a node in tree and all of 
+#     this node's descendants. The tree tree could also be considered as a subtree of itself.
+#     """
+#     def __hash(node: TreeNode):
+#         s = sha256()
+#         s.update(str(node.val))
+#         return s.digest()
+
+#     def __merkel(node: Optional[TreeNode]):
+#         if not node:
+#             return '#'
+
+#         left = __merkel(node.left)
+#         right = __merkel(node.right)
+
+#         node.merkel = left + __hash(node) + right
+
+#         return node.merkel
+
+#     __merkel(root)
+#     __merkel(subRoot)
+
+#     def dfs(root: Optional[TreeNode], subRoot: Optional[TreeNode]):
+#         if not root:
+#             return False
+
+#         isEqual = root.merkel == subRoot.merkel
+
+#         return isEqual or dfs(root.left) or dfs(root.right)
+
+#     return dfs(root, subRoot)
+
+
+# def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+#     """
+#     Question 29
+
+#     Lowest Common Ancestor of a Binary Search Tree
+
+#     Given a binary search tree (BST), find the lowest common ancestor (LCA) 
+#     node of two given nodes in the BST.
+#     According to the definition of LCA on Wikipedia: 
+#     “The lowest common ancestor is defined between two nodes p and q as the lowest 
+#     node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+#     """
+
+#     CommonNode = collections.namedtuple('CommonNode', 'node found')
+
+#     def __lca(node: Optional[TreeNode], p: Optional[TreeNode], q: Optional[TreeNode]):
+#         if not node:
+#             return CommonNode(None, False)
+
+#         if node.val == p.val or node.val == q.val:
+#             return CommonNode(node.val, True)
+
+#         left = __lca(node.left, p, q)
+#         right = __lca(node.right, p, q)
+
+#         if left.found and right.found:
+#             return CommonNode(node.val, True)
+
+#         found = left.found or right.node
+#         __node = None if not found else (left.node if left.found else right.node)
+
+#         return CommonNode(__node, found)
+    
+#     return __lca(root, p, q)
+
+
+# def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+#     """
+#     Question 29
+
+#     Lowest Common Ancestor of a Binary Search Tree
+
+#     Given a binary search tree (BST), find the lowest common ancestor (LCA) 
+#     node of two given nodes in the BST.
+#     According to the definition of LCA on Wikipedia: 
+#     “The lowest common ancestor is defined between two nodes p and q as the lowest 
+#     node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+#     """
+
+#     while root:
+#         if root.val > p.val and root.val > q.val:
+#             root = root.left
+#         elif root.val < p.val and root.val < q.val:
+#             root = root.right
+#         else:
+#             return root
+    
+#     return None
+
+# def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:
+#     """
+#     Question no 30
+
+#     Binary Tree Level Order Traversal
+
+#     Given the root of a binary tree, return the level order 
+#     traversal of its nodes' values. (i.e., from left to right, level by level).
+#     """
+
+#     level_order = [root]
+#     result = []
+
+#     while root and level_order:
+#         result.append([node.val for node in level_order if node])
+#         level_order = [child for node in level_order for child in (node.left, node.right) if child]
+
+#     return result
+
+# def isValidBST(root: Optional[TreeNode]) -> bool:
+#     """
+#     Question 31
+    
+#     Validate Binary Search Tree
+
+#     Given the root of a binary tree, determine if it is a valid binary search tree (BST).
+#     A valid BST is defined as follows
+
+#     The left subtree of a node contains only nodes with keys less than the node's key.
+#     The right subtree of a node contains only nodes with keys greater than the node's key.
+#     Both the left and right subtrees must also be binary search trees.
+#     """
+#     def __isValidBST(node: Optional[TreeNode], min, max):
+#         if not node:
+#             return True
+
+#         if node.left <= min or node.right >= max:
+#             return False
+
+#         left = __isValidBST(node.left, min, node.val)
+#         right = __isValidBST(node.right, node.val, max)
+
+#         return left and right
+
+#     return __isValidBST(root, float('-inf'), float('inf'))
+    
