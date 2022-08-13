@@ -1161,42 +1161,42 @@ def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
     return __isSameTree(p, q)
 
 
-# def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
-#     """
-#     Question 28
+def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+    """
+    Question 28
 
-#     Subtree of Another Tree
+    Subtree of Another Tree
 
-#     Given the roots of two binary trees root and subRoot, return true if there is a 
-#     subtree of root with the same structure and node values of subRoot and false otherwise.
-#     A subtree of a binary tree tree is a tree that consists of a node in tree and all of 
-#     this node's descendants. The tree tree could also be considered as a subtree of itself.
-#     """
-#     def __isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> int:
-#         if not p and not q:
-#             return True
+    Given the roots of two binary trees root and subRoot, return true if there is a 
+    subtree of root with the same structure and node values of subRoot and false otherwise.
+    A subtree of a binary tree tree is a tree that consists of a node in tree and all of 
+    this node's descendants. The tree tree could also be considered as a subtree of itself.
+    """
+    def __isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> int:
+        if not p and not q:
+            return True
 
-#         if p or q:
-#             return False
+        if p or q:
+            return False
 
-#         if p.val != q.val:
-#             return False
+        if p.val != q.val:
+            return False
 
-#         left = __isSameTree(p.left, q.left)
-#         right = __isSameTree(p.right, q.right)
+        left = __isSameTree(p.left, q.left)
+        right = __isSameTree(p.right, q.right)
 
-#         return left and right
+        return left and right
 
-#     def dfs(p: Optional[TreeNode], q: Optional[TreeNode]):
-#         if not p:
-#             return False
+    def dfs(p: Optional[TreeNode], q: Optional[TreeNode]):
+        if not p:
+            return False
 
-#         if p.val == q.val and __isSameTree(p, q):
-#             return True
+        if p.val == q.val and __isSameTree(p, q):
+            return True
 
-#         return dfs(p.left, q) or dfs(p.right, q)
+        return dfs(p.left, q) or dfs(p.right, q)
 
-#     return dfs(root, subRoot)
+    return dfs(root, subRoot)
 
 
 # def isSubtreeFast(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
