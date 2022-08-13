@@ -1299,24 +1299,24 @@ def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'Tre
     
     return None
 
-# def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:
-#     """
-#     Question no 30
+def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:
+    """
+    Question no 30
 
-#     Binary Tree Level Order Traversal
+    Binary Tree Level Order Traversal
 
-#     Given the root of a binary tree, return the level order 
-#     traversal of its nodes' values. (i.e., from left to right, level by level).
-#     """
+    Given the root of a binary tree, return the level order 
+    traversal of its nodes' values. (i.e., from left to right, level by level).
+    """
 
-#     level_order = [root]
-#     result = []
+    level_order = [root]
+    result = []
 
-#     while root and level_order:
-#         result.append([node.val for node in level_order if node])
-#         level_order = [child for node in level_order for child in (node.left, node.right) if child]
+    while root and level_order:
+        result.append([node.val for node in level_order if node])
+        level_order = [child for node in level_order for child in (node.left, node.right) if child]
 
-#     return result
+    return result
 
 # def isValidBST(root: Optional[TreeNode]) -> bool:
 #     """
