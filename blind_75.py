@@ -1240,64 +1240,64 @@ def isSubtreeFast(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool
     return dfs(root, subRoot)
 
 
-# def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
-#     """
-#     Question 29
+def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+    """
+    Question 29
 
-#     Lowest Common Ancestor of a Binary Search Tree
+    Lowest Common Ancestor of a Binary Search Tree
 
-#     Given a binary search tree (BST), find the lowest common ancestor (LCA) 
-#     node of two given nodes in the BST.
-#     According to the definition of LCA on Wikipedia: 
-#     “The lowest common ancestor is defined between two nodes p and q as the lowest 
-#     node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
-#     """
+    Given a binary search tree (BST), find the lowest common ancestor (LCA) 
+    node of two given nodes in the BST.
+    According to the definition of LCA on Wikipedia: 
+    “The lowest common ancestor is defined between two nodes p and q as the lowest 
+    node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+    """
 
-#     CommonNode = collections.namedtuple('CommonNode', 'node found')
+    CommonNode = collections.namedtuple('CommonNode', 'node found')
 
-#     def __lca(node: Optional[TreeNode], p: Optional[TreeNode], q: Optional[TreeNode]):
-#         if not node:
-#             return CommonNode(None, False)
+    def __lca(node: Optional[TreeNode], p: Optional[TreeNode], q: Optional[TreeNode]):
+        if not node:
+            return CommonNode(None, False)
 
-#         if node.val == p.val or node.val == q.val:
-#             return CommonNode(node.val, True)
+        if node.val == p.val or node.val == q.val:
+            return CommonNode(node.val, True)
 
-#         left = __lca(node.left, p, q)
-#         right = __lca(node.right, p, q)
+        left = __lca(node.left, p, q)
+        right = __lca(node.right, p, q)
 
-#         if left.found and right.found:
-#             return CommonNode(node.val, True)
+        if left.found and right.found:
+            return CommonNode(node.val, True)
 
-#         found = left.found or right.node
-#         __node = None if not found else (left.node if left.found else right.node)
+        found = left.found or right.node
+        __node = None if not found else (left.node if left.found else right.node)
 
-#         return CommonNode(__node, found)
+        return CommonNode(__node, found)
     
-#     return __lca(root, p, q)
+    return __lca(root, p, q)
 
 
-# def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
-#     """
-#     Question 29
+def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+    """
+    Question 29
 
-#     Lowest Common Ancestor of a Binary Search Tree
+    Lowest Common Ancestor of a Binary Search Tree
 
-#     Given a binary search tree (BST), find the lowest common ancestor (LCA) 
-#     node of two given nodes in the BST.
-#     According to the definition of LCA on Wikipedia: 
-#     “The lowest common ancestor is defined between two nodes p and q as the lowest 
-#     node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
-#     """
+    Given a binary search tree (BST), find the lowest common ancestor (LCA) 
+    node of two given nodes in the BST.
+    According to the definition of LCA on Wikipedia: 
+    “The lowest common ancestor is defined between two nodes p and q as the lowest 
+    node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+    """
 
-#     while root:
-#         if root.val > p.val and root.val > q.val:
-#             root = root.left
-#         elif root.val < p.val and root.val < q.val:
-#             root = root.right
-#         else:
-#             return root
+    while root:
+        if root.val > p.val and root.val > q.val:
+            root = root.left
+        elif root.val < p.val and root.val < q.val:
+            root = root.right
+        else:
+            return root
     
-#     return None
+    return None
 
 # def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:
 #     """
