@@ -1,11 +1,12 @@
 
 from cgitb import reset
 import collections
+from distutils.command.build import build
 import enum
 from hashlib import sha256
 import heapq
 from multiprocessing import dummy
-from os import curdir
+from os import curdir, pread
 import queue
 import re
 import string
@@ -1445,6 +1446,7 @@ def kthSmallestMorris(root: Optional[TreeNode], k: int) -> int:
 
     return None
 
+
 def buildTree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
     """
     Question 35
@@ -1457,22 +1459,23 @@ def buildTree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
     """
     current = iter(preorder)
     inorder_map = {}
-    
+
     for index, value in enumerate(inorder):
         inorder_map[value] = index
-    
+
     def __build(lo, hi):
         if lo > hi:
             return None
-        
+
         node = TreeNode(next(current))
         mid = inorder_map[node.val]
         node.left = __build(lo, mid - 1)
         node.right = __build(mid + 1, hi)
 
         return node
-    
+
     return __build(0, len(inorder) - 1)
+
 
 def maxPathSum(root: Optional[TreeNode]) -> int:
     """
@@ -1503,13 +1506,65 @@ def maxPathSum(root: Optional[TreeNode]) -> int:
         max_node_plus_left = node.val + left_max
         max_node_plus_right = node.val + right_max
 
-        result[0] = max(result[0], max_without_split, max_node, max_node_plus_left, max_node_plus_right)
+        result[0] = max(result[0], max_without_split, max_node,
+                        max_node_plus_left, max_node_plus_right)
 
         max_with_split = node.val + max(left_max, right_max)
-        
+
         return max_with_split
 
     __maxPathSum(root)
 
     return result[-1]
 
+
+class Codec:
+
+    def __init__(self) -> None:
+        self.__NULL = 'x'
+        self.__seperator = ','
+
+    def serialize(self, root):
+        """Encodes a tree to a single string.
+
+        :type root: TreeNode
+        :rtype: str
+        """
+        preorder = []
+        
+        def dfs(node):
+            if not node:
+                preorder.append(self.__NULL)
+                return
+
+            preorder.append(str(node.val))
+            dfs(node.left)
+            dfs(node.right)
+
+        dfs(root)
+        return self.__seperator.join(preorder)
+
+    def deserialize(self, data):
+        """Decodes your encoded data to tree.
+
+        :type data: str
+        :rtype: TreeNode
+        """
+        preorder = collections.deque(data.split(self.__seperator))
+
+        def buildTree():
+            if not preorder: return
+
+            item = preorder.popleft()
+            
+            if item == self.__NULL:
+                return None
+
+            node = TreeNode(int(item))
+            node.left = buildTree()
+            node.right = buildTree()
+
+            return node
+
+        root = buildTree()
+        return root
