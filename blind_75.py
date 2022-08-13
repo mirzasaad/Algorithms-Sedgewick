@@ -1269,10 +1269,11 @@ def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'Tre
             return CommonNode(node.val, True)
 
         found = left.found or right.node
-        __node = None if not found else (left.node if left.found else right.node)
+        __node = None if not found else (
+            left.node if left.found else right.node)
 
         return CommonNode(__node, found)
-    
+
     return __lca(root, p, q)
 
 
@@ -1296,8 +1297,9 @@ def lowestCommonAncestor(root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'Tre
             root = root.right
         else:
             return root
-    
+
     return None
+
 
 def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:
     """
@@ -1314,14 +1316,16 @@ def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:
 
     while root and level_order:
         result.append([node.val for node in level_order if node])
-        level_order = [child for node in level_order for child in (node.left, node.right) if child]
+        level_order = [child for node in level_order for child in (
+            node.left, node.right) if child]
 
     return result
+
 
 def isValidBST(root: Optional[TreeNode]) -> bool:
     """
     Question 31
-    
+
     Validate Binary Search Tree
 
     Given the root of a binary tree, determine if it is a valid binary search tree (BST).
@@ -1344,4 +1348,176 @@ def isValidBST(root: Optional[TreeNode]) -> bool:
         return left and right
 
     return __isValidBST(root, float('-inf'), float('inf'))
+
+
+def kthSmallestRecursive(root: Optional[TreeNode], k: int) -> int:
+    """
+    Question 32
+
+    Kth Smallest Element in a BST
+
+    Given the root of a binary search tree, and an integer k, 
+    return the kth smallest value (1-indexed) of all the values of the nodes in the tree.
+    """
+
+    result = None
+
+    def kthSmallest(node: Optional[TreeNode]):
+        if not node:
+            return
+
+        kthSmallest(node.left)
+        k -= 1
+        if k == 0:
+            result = node
+            return
+        kthSmallest(node.right)
+
+    kthSmallest(root)
+
+    return result
+
+
+def kthSmallestIterative(root: Optional[TreeNode], k: int) -> int:
+    """
+    Question 33
+
+    Kth Smallest Element in a BST
+
+    Given the root of a binary search tree, and an integer k, 
+    return the kth smallest value (1-indexed) of all the values of the nodes in the tree.
+    """
+
+    stack = []
+    while stack or root:
+
+        while root:
+            stack.append(root)
+            root = root.left
+
+        root = root.pop()
+
+        k -= 1
+        if k == 0:
+            return root
+
+        root = root.right
+
+    return reset
+
+
+def kthSmallestMorris(root: Optional[TreeNode], k: int) -> int:
+    """
+    Question 34
+
+    Kth Smallest Element in a BST
+
+    Given the root of a binary search tree, and an integer k, 
+    return the kth smallest value (1-indexed) of all the values of the nodes in the tree.
+    """
+
+    if k == 0:
+        return None
+
+    current = root
+    while current:
+        if not current.left:
+            k -= 1
+            if k == 0:
+                return current.val
+            current = current.right
+        else:
+            pre = current.left
+
+            while pre.right and pre.right is not current:
+                pre = pre.right
+
+            if pre.right is current:
+                k -= 1
+                if k == 0:
+                    return current.val
+
+                pre.right = None
+                current = current.right
+            else:
+                pre.right = current
+                current = current.left
+
+    return None
+
+# def buildTree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+#     """
+#     Question 35
+
+#     Construct Binary Tree from Preorder and Inorder Traversal
+
+#     Given two integer arrays preorder and inorder where preorder is the preorder 
+#     traversal of a binary tree and inorder is the inorder traversal of the same tree, 
+#     construct and return the binary tree.
+#     """
+#     current = iter(preorder)
+#     inorder_map = {}
     
+#     for index, value in enumerate(inorder):
+#         inorder_map[value] = index
+    
+#     def __build(lo, hi):
+#         if lo > hi:
+#             return None
+        
+#         node = TreeNode(next(current))
+#         mid = inorder_map[node.val]
+#         node.left = __build(lo, mid - 1)
+#         node.right = __build(mid + 1, hi)
+
+#         return node
+    
+#     return __build(0, len(inorder) - 1)
+
+# def maxPathSum(root: Optional[TreeNode]) -> int:
+#     """
+#     Question 36
+
+#     Binary Tree Maximum Path Sum
+
+#     A path in a binary tree is a sequence of nodes where each pair of 
+#     adjacent nodes in the sequence has an edge connecting them. A node can only 
+#     appear in the sequence at most once. Note that the path does not need to pass through the root.
+#     The path sum of a path is the sum of the node's values in the path.
+#     Given the root of a binary tree, return the maximum path sum of any non-empty path.
+#     """
+#     result = [root.val]
+
+#     def __maxPathSum(node: Optional[TreeNode]):
+#         if not node:
+#             return 0
+
+#         left = __maxPathSum(node.left)
+#         right = __maxPathSum(node.right)
+
+#         left_max = max(0, left)
+#         right_max = max(0, right)
+
+#         max_without_split = node.val + left_max + right_max
+#         max_node = node.val
+#         max_node_plus_left = node.val + left_max
+#         max_node_plus_right = node.val + right_max
+
+#         result[0] = max(result[0], max_without_split, max_node, max_node_plus_left, max_node_plus_right)
+
+#         max_with_split = node.val + max(left_max, right_max)
+        
+#         return max_with_split
+
+#     __maxPathSum(root)
+
+#     return result[-1]
+
+
+
+
+
+
+# root = TreeNode(-10, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))
+
+# print(maxPathSum(TreeNode(-3)))
