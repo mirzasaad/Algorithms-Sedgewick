@@ -1133,32 +1133,32 @@ def maxDepth(root: Optional[TreeNode]) -> int:
     return __maxDepth(root)
 
 
-# def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
-#     """
-#     Question 27
+def isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+    """
+    Question 27
 
-#     Same Tree
+    Same Tree
 
-#     Given the roots of two binary trees p and q, write a function to check if they are the same or not.
-#     Two binary trees are considered the same if they are structurally identical, and the nodes have the same value.
-#     """
+    Given the roots of two binary trees p and q, write a function to check if they are the same or not.
+    Two binary trees are considered the same if they are structurally identical, and the nodes have the same value.
+    """
 
-#     def __isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> int:
-#         if not p and not q:
-#             return True
+    def __isSameTree(p: Optional[TreeNode], q: Optional[TreeNode]) -> int:
+        if not p and not q:
+            return True
 
-#         if p or q:
-#             return False
+        if p or q:
+            return False
 
-#         if p.val != q.val:
-#             return False
+        if p.val != q.val:
+            return False
 
-#         left = __isSameTree(p.left, q.left)
-#         right = __isSameTree(p.right, q.right)
+        left = __isSameTree(p.left, q.left)
+        right = __isSameTree(p.right, q.right)
 
-#         return left and right
+        return left and right
 
-#     return __isSameTree(p, q)
+    return __isSameTree(p, q)
 
 
 # def isSubtree(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
