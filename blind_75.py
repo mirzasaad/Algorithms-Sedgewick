@@ -1318,30 +1318,30 @@ def levelOrder(root: Optional[TreeNode]) -> List[List[int]]:
 
     return result
 
-# def isValidBST(root: Optional[TreeNode]) -> bool:
-#     """
-#     Question 31
+def isValidBST(root: Optional[TreeNode]) -> bool:
+    """
+    Question 31
     
-#     Validate Binary Search Tree
+    Validate Binary Search Tree
 
-#     Given the root of a binary tree, determine if it is a valid binary search tree (BST).
-#     A valid BST is defined as follows
+    Given the root of a binary tree, determine if it is a valid binary search tree (BST).
+    A valid BST is defined as follows
 
-#     The left subtree of a node contains only nodes with keys less than the node's key.
-#     The right subtree of a node contains only nodes with keys greater than the node's key.
-#     Both the left and right subtrees must also be binary search trees.
-#     """
-#     def __isValidBST(node: Optional[TreeNode], min, max):
-#         if not node:
-#             return True
+    The left subtree of a node contains only nodes with keys less than the node's key.
+    The right subtree of a node contains only nodes with keys greater than the node's key.
+    Both the left and right subtrees must also be binary search trees.
+    """
+    def __isValidBST(node: Optional[TreeNode], min, max):
+        if not node:
+            return True
 
-#         if node.left <= min or node.right >= max:
-#             return False
+        if node.left <= min or node.right >= max:
+            return False
 
-#         left = __isValidBST(node.left, min, node.val)
-#         right = __isValidBST(node.right, node.val, max)
+        left = __isValidBST(node.left, min, node.val)
+        right = __isValidBST(node.right, node.val, max)
 
-#         return left and right
+        return left and right
 
-#     return __isValidBST(root, float('-inf'), float('inf'))
+    return __isValidBST(root, float('-inf'), float('inf'))
     
