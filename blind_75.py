@@ -1600,10 +1600,10 @@ class TrieNode:
     def __init__(self):
         self.children = collections.defaultdict(TrieNode)
         self.is_word = False
-    
+
     def __repr__(self) -> str:
         return 'Trie(children={}, is_word={})'.format(self.children.keys(), self.is_word)
-    
+
 
 class Trie:
     """
@@ -1630,21 +1630,22 @@ class Trie:
 
         for letter in key:
             current = current.children[letter]
-        
+
         current.is_word = True
 
-    def search(self, word: str) -> bool:    
+    def search(self, word: str) -> bool:
         current = self._root
 
         for letter in word:
             current = current.children.get(letter)
             if current is None:
                 return False
-        
+
         return current.is_word
 
     def startsWith(self, prefix: str) -> bool:
         return self.search(prefix)
+
 
 class WordDictionary:
     """
@@ -1690,7 +1691,7 @@ class WordDictionary:
                 return
 
             letter = word[d]
-            
+
             is_wild_card = letter == '.'
 
             if is_wild_card:
@@ -1702,6 +1703,7 @@ class WordDictionary:
         __search(self._root, word, 0)
 
         return response[-1]
+
 
 def findWords(board: List[List[str]], words: List[str]) -> List[str]:
     """
@@ -1724,7 +1726,7 @@ def findWords(board: List[List[str]], words: List[str]) -> List[str]:
         # if iterators out of out return early
         if i < 0 or j < 0 or i > m or j > n:
             return
-        
+
         letter = board[i][j]
 
         # return early if already visited
@@ -1733,7 +1735,7 @@ def findWords(board: List[List[str]], words: List[str]) -> List[str]:
 
         if letter not in node.children:
             return
-        
+
         next_node = node.children.get(letter)
 
         board[i][j] = '#'
@@ -1760,6 +1762,7 @@ def findWords(board: List[List[str]], words: List[str]) -> List[str]:
 
     return result
 
+
 class MedianFinder:
     """
     Question no 39
@@ -1776,6 +1779,7 @@ class MedianFinder:
     void addNum(int num) adds the integer num from the data stream to the data structure.
     double findMedian() returns the median of all elements so far. Answers within 10-5 of the actual answer will be accepted.
     """
+
     def __init__(self):
         self._minPQ = []
         self._maxPQ = []
@@ -1796,12 +1800,12 @@ class MedianFinder:
 
         if len(self._maxPQ) == len(self._maxPQ):
             return heapq.nlargest(0, self._maxPQ) + heapq.nsmallest(0, self._minPQ)
-        
+
         if len(self._maxPQ) > len(self._minPQ):
             return heapq.heappop(self._maxPQ)
         else:
             return heapq._heappop_max(self._minPQ)
-    
+
     def __rebalance(self):
         if len(self._maxPQ) == len(self._maxPQ):
             return
@@ -1814,6 +1818,101 @@ class MedianFinder:
         else:
             heapq.heappush(self._minPQ, heapq._heappop_max(self._minPQ))
 
-    
-           
+
+def combinationSum(candidates: List[int], target: int) -> List[List[int]]:
+    """
+    Question 40
+
+    Combination Sum
+
+    Given an array of distinct integers candidates and a target integer target, 
+    return a list of all unique combinations of candidates where the chosen numbers sum to target. 
+    You may return the combinations in any order.
+    The same number may be chosen from candidates an unlimited number of times. 
+    Two combinations are unique if the frequency of at least one of the chosen numbers is different.
+
+    It is guaranteed that the number of unique combinations that sum up 
+    to target is less than 150 combinations for the given input.
+    """
+    N = len(candidates)
+    result = []
+
+    def dfs(index, current, current_path, result):
+        if current > target:
+            return
+
+        if current == target:
+            result.append(current_path[:])
+            return
+
+        for i in range(index, N):
+            candidate = candidates[i]
+            current_path.append(candidate)
+            dfs(i, current + candidate, current_path, result)
+            current_path.pop()
+
+    dfs(0, 0, [], result)
+
+    return result
+
+def exist(board: List[List[str]], word: str) -> bool:
+    """
+    Question 41
+
+    Word Search
+
+    Given an m x n grid of characters board and a string word, 
+    return true if word exists in the grid.
+    The word can be constructed from letters of sequentially adjacent cells, 
+    where adjacent cells are horizontally or vertically neighboring. 
+    The same letter cell may not be used more than once.
+    """
+    if not board or not board[0]:
+        return False
+
+    def dfs(board, i, j, m, n, word_length, index):
+        if word_length == index:
+            return True
+
+        if i < 0 or j < 0 or i >= m or j >= n:
+            return False
+
+        letter = board[i][j]
+
+        if letter == '#' or letter != word[index]:
+            return False
         
+        board[i][j] = '#'
+
+        right = dfs(board, i + 1, j, m, n, word_length, index + 1)
+        left = dfs(board, i - 1, j, m, n, word_length, index + 1)
+        top = dfs(board, i, j + 1, m, n, word_length, index + 1)
+        bottom = dfs(board, i, j - 1, m, n, word_length, index + 1)
+
+        board[i][j] = letter
+
+        return left or right or top or bottom
+
+    result = [False]
+    M, N = len(board), len(board[0])
+
+    for i in range(M):
+        for j in range(N):
+            result = dfs(board, i, j, M, N, len(word), 0)
+
+            if result:
+                return True
+
+    return False
+
+board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]] 
+word = "ABCCED"
+
+board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+word = "SEE"
+
+board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+word = "ABCB"
+
+print(exist(board, word))
+
