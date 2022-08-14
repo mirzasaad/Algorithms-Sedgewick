@@ -1,19 +1,22 @@
 
-from cgitb import reset
 import collections
-from distutils.command.build import build
-import enum
 from hashlib import sha256
 import heapq
-from multiprocessing import dummy
-from os import curdir, pread
-import queue
-import re
 import string
-from turtle import right, rt
 from typing import List, Optional
 
 # https://neetcode.io/
+
+
+class TrieNode(object):
+    def __init__(self) -> None:
+        self._value = None
+        self._next = collections.defaultdict(TrieNode)
+        self._size = 0
+        self._wordCount = 0
+
+    def __repr__(self) -> str:
+        return 'TrieNode({} -> {} -> {})'.format(self._next, self._value, self._wordCount)
 
 
 class ListNode(object):
@@ -1404,7 +1407,7 @@ def kthSmallestIterative(root: Optional[TreeNode], k: int) -> int:
 
         root = root.right
 
-    return reset
+    return None
 
 
 def kthSmallestMorris(root: Optional[TreeNode], k: int) -> int:
@@ -1519,6 +1522,11 @@ def maxPathSum(root: Optional[TreeNode]) -> int:
 
 
 class Codec:
+    """
+    Question 37
+
+    Implement serialize and serialize binary search tree 
+    """
 
     def __init__(self) -> None:
         self.__NULL = 'x'
@@ -1531,7 +1539,7 @@ class Codec:
         :rtype: str
         """
         preorder = []
-        
+
         def dfs(node):
             if not node:
                 preorder.append(self.__NULL)
@@ -1553,10 +1561,11 @@ class Codec:
         preorder = collections.deque(data.split(self.__seperator))
 
         def buildTree():
-            if not preorder: return
+            if not preorder:
+                return
 
             item = preorder.popleft()
-            
+
             if item == self.__NULL:
                 return None
 
@@ -1568,3 +1577,243 @@ class Codec:
 
         root = buildTree()
         return root
+
+
+def rabinKarp(text, pattern):
+    radix = 256
+    q = 997
+    honer = pow(radix, len(pattern) - 1)
+
+    p_hash = 0
+
+    for ch in pattern:
+        p_hash = (radix * p_hash + ord(ch))
+
+    old = ''
+
+    for ch in pattern:
+        p_hash = (radix * (p_hash - ord(ch) * honer) + ord(ch)) % q
+
+
+class TrieNode:
+    # Initialize your data structure here.
+    def __init__(self):
+        self.children = collections.defaultdict(TrieNode)
+        self.is_word = False
+    
+    def __repr__(self) -> str:
+        return 'Trie(children={}, is_word={})'.format(self.children.keys(), self.is_word)
+    
+
+class Trie:
+    """
+    Question 38
+
+    Implement Trie (Prefix Tree)
+
+    A trie (pronounced as "try") or prefix tree is a tree data structure used to efficiently 
+    store and retrieve keys in a dataset of strings. There are various applications of this data structure, 
+    such as autocomplete and spellchecker.
+    Implement the Trie class:
+    Trie() Initializes the trie object.
+    void insert(String word) Inserts the string word into the trie.
+    boolean search(String word) Returns true if the string word is in the trie (i.e., was inserted before), and false otherwise.
+    boolean startsWith(String prefix) Returns true if there is a previously inserted string word that has the prefix prefix, and false otherwise.
+        """
+
+    def __init__(self):
+        self._root = TrieNode()
+        self._size = 0
+
+    def insert(self, key: str) -> None:
+        current = self._root
+
+        for letter in key:
+            current = current.children[letter]
+        
+        current.is_word = True
+
+    def search(self, word: str) -> bool:    
+        current = self._root
+
+        for letter in word:
+            current = current.children.get(letter)
+            if current is None:
+                return False
+        
+        return current.is_word
+
+    def startsWith(self, prefix: str) -> bool:
+        return self.search(prefix)
+
+class WordDictionary:
+    """
+    Question 39
+
+    WordDictionary
+
+    Implement Trie (Prefix Tree)
+
+    A trie (pronounced as "try") or prefix tree is a tree data structure used to efficiently 
+    store and retrieve keys in a dataset of strings. There are various applications of this data structure, 
+    such as autocomplete and spellchecker.
+    Implement the Trie class:
+    Trie() Initializes the trie object.
+    void insert(String word) Inserts the string word into the trie.
+    boolean search(String word) Returns true if the string word is in the trie (i.e., was inserted before), and false otherwise.
+    boolean startsWith(String prefix) Returns true if there is a previously inserted string word that has the prefix prefix, and false otherwise.
+        """
+
+    def __init__(self):
+        self._root = TrieNode()
+        self._size = 0
+        self._reponse = False
+
+    def insert(self, key: str) -> None:
+        current = self._root
+
+        for letter in key:
+            current = current.children[letter]
+        current.is_word = True
+
+    def search(self, word):
+        response = [False]
+
+        def __search(node, word, d):
+            if not node:
+                return
+
+            if d == len(word):
+                print(node, node.is_word)
+                if node.is_word:
+                    response[0] = node.is_word
+                return
+
+            letter = word[d]
+            
+            is_wild_card = letter == '.'
+
+            if is_wild_card:
+                __search(node.children.get(letter), word, d + 1)
+            else:
+                for key in node.children.keys():
+                    __search(node.children.get(key), word, d + 1)
+
+        __search(self._root, word, 0)
+
+        return response[-1]
+
+def findWords(board: List[List[str]], words: List[str]) -> List[str]:
+    """
+    Question 38
+
+    Word Search II
+
+    Given an m x n board of characters and a list of strings words, return all words on the board.
+    Each word must be constructed from letters of sequentially adjacent cells, 
+    where adjacent cells are horizontally or vertically neighboring. 
+    The same letter cell may not be used more than once in a word.
+    """
+
+    def dfs(board: List[List[str]], node: TrieNode, path: str, i: int, j: int, m: int, n: int, result: List[str]):
+        # if word is found append it to result and return early
+        if node.is_word:
+            result.append(path)
+            return
+
+        # if iterators out of out return early
+        if i < 0 or j < 0 or i > m or j > n:
+            return
+        
+        letter = board[i][j]
+
+        # return early if already visited
+        if letter == '#':
+            return
+
+        if letter not in node.children:
+            return
+        
+        next_node = node.children.get(letter)
+
+        board[i][j] = '#'
+
+        dfs(board, next_node, path + letter, i + 1, j, m, n, result)
+        dfs(board, next_node, path + letter, i - 1, j, m, n, result)
+        dfs(board, next_node, path + letter, i, j + 1, m, n, result)
+        dfs(board, next_node, path + letter, i, j - 1, m, n, result)
+
+        board[i][j] = letter
+
+    result = []
+    trie = Trie()
+    node = trie.root
+
+    M, N = len(words), len(words[0])
+
+    for word in words:
+        trie.insert(word)
+
+    for i in range(M):
+        for j in range(N):
+            dfs(board, node, '', i, j, M, N, result)
+
+    return result
+
+class MedianFinder:
+    """
+    Question no 39
+
+    Find Median from Data Stream
+    The median is the middle value in an ordered integer list. If the size of the list is even, 
+    there is no middle value and the median is the mean of the two middle values.
+
+    For example, for arr = [2,3,4], the median is 3.
+    For example, for arr = [2,3], the median is (2 + 3) / 2 = 2.5.
+    Implement the MedianFinder class:
+
+    MedianFinder() initializes the MedianFinder object.
+    void addNum(int num) adds the integer num from the data stream to the data structure.
+    double findMedian() returns the median of all elements so far. Answers within 10-5 of the actual answer will be accepted.
+    """
+    def __init__(self):
+        self._minPQ = []
+        self._maxPQ = []
+
+    def addNum(self, num: int) -> None:
+        median = self.findMedian()
+
+        if num <= median:
+            heapq._heappush_max(self._maxPQ)
+        else:
+            heapq.heappush(self._minPQ)
+
+        self.__rebalance()
+
+    def findMedian(self) -> float:
+        if not self._maxPQ and not self._minPQ:
+            return 0
+
+        if len(self._maxPQ) == len(self._maxPQ):
+            return heapq.nlargest(0, self._maxPQ) + heapq.nsmallest(0, self._minPQ)
+        
+        if len(self._maxPQ) > len(self._minPQ):
+            return heapq.heappop(self._maxPQ)
+        else:
+            return heapq._heappop_max(self._minPQ)
+    
+    def __rebalance(self):
+        if len(self._maxPQ) == len(self._maxPQ):
+            return
+
+        if abs(len(self._maxPQ) - len(self._minPQ)) >= 1:
+            return
+
+        if len(self._maxPQ) > len(self._minPQ):
+            heapq._heappush_max(self._maxPQ, heapq.heappop(self._maxPQ))
+        else:
+            heapq.heappush(self._minPQ, heapq._heappop_max(self._minPQ))
+
+    
+           
+        
