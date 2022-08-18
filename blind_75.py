@@ -2385,3 +2385,131 @@ def countSubstrings(s: str) -> int:
         count_substring(i, i + 1, N - 1)
 
     return count[-1]
+
+def numDecodings(s: str) -> int:
+    """
+    Question 54
+
+    Decode Ways
+
+    A message containing letters from A-Z can be encoded into numbers using the following mapping:
+
+    'A' -> "1"
+    'B' -> "2"
+    ...
+    'Z' -> "26"
+    To decode an encoded message, all the digits must be grouped then mapped back into letters using the reverse of the mapping above (there may be multiple ways). For example, "11106" can be mapped into:
+
+    "AAJF" with the grouping (1 1 10 6)
+    "KJF" with the grouping (11 10 6)
+    Note that the grouping (1 11 06) is invalid because "06" cannot be mapped into 'F' since "6" is different from "06".
+
+    Given a string s containing only digits, return the number of ways to decode it.
+
+    The test cases are generated so that the answer fits in a 32-bit integer.
+    """
+
+    memo = {}
+
+    def dfs(i):
+        if i in memo:
+            return memo[i]
+        if i == 0:
+            return 1
+        if i < 0 or s[i - 1] == '0':
+            return 0
+
+        ways = 0
+        ways += dfs(i - 1)
+        if i > 1 and s[i - 2] in ('1', '2') and s[i - 1] in ('0', '1', '2', '3', '4', '5', '6'):
+            ways += dfs(i - 2)
+
+        memo[i] = ways 
+        return ways
+    
+    return dfs(len(s))
+        
+def numDecodings(s: str) -> int:
+    """
+    Question 54
+
+    Decode Ways
+
+    A message containing letters from A-Z can be encoded into numbers using the following mapping:
+
+    'A' -> "1"
+    'B' -> "2"
+    ...
+    'Z' -> "26"
+    To decode an encoded message, all the digits must be grouped then mapped back into letters using the reverse of the mapping above (there may be multiple ways). For example, "11106" can be mapped into:
+
+    "AAJF" with the grouping (1 1 10 6)
+    "KJF" with the grouping (11 10 6)
+    Note that the grouping (1 11 06) is invalid because "06" cannot be mapped into 'F' since "6" is different from "06".
+
+    Given a string s containing only digits, return the number of ways to decode it.
+
+    The test cases are generated so that the answer fits in a 32-bit integer.
+    """
+
+    memo = { len(s): 1 }
+
+    def dfs(i):
+        if i in memo:
+            return memo[i]
+
+        if s[i] == '0':
+            return 0
+
+        ways = dfs(i + 1)
+        if i + 1 < len(s) and s[i] in ('1', '2') and s[i + 1] in ('0', '1', '2', '3', '4', '5', '6'):
+            ways += dfs(i + 2)
+
+        memo[i] = ways 
+        return ways
+    
+    return dfs(0)
+
+# def coinChange(coins: List[int], amount: int) -> int:
+#     """
+#     Question 55
+
+#     Coin Change
+
+#     You are given an integer array coins representing coins of different 
+#     denominations and an integer amount representing a total amount of money.
+#     Return the fewest number of coins that you need to make up that amount. 
+#     If that amount of money cannot be made up by any combination of the coins, return -1.
+#     You may assume that you have an infinite number of each kind of coin.
+#     """
+#     result = []
+#     count = None
+#     cache = {}
+
+#     def dfs(i, current_sum, path, result):
+#         nonlocal count
+
+#         if (current_sum in cache):
+#             return cache[current_sum]
+
+#         if current_sum > amount:
+#             return
+        
+#         if current_sum == amount:
+#             count = len(path)
+#             result.append(path[:])
+#             return
+
+#         cache[current_sum] = len(path)
+
+#         for idx in reversed(range(i, len(coins))):
+#             coin = coins[idx]
+#             path.append(coin)
+#             dfs(idx, current_sum + coin, path, result)
+#             path.pop()
+    
+#     dfs(0, 0, [], result)
+
+#     print(result)
+
+# coinChange(coins = [1,3,4, 5], amount = 7)
