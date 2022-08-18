@@ -2328,3 +2328,35 @@ def robII(nums: List[int]) -> int:
     """
 
     return max(nums[0], rob(nums[1:]), rob(nums[:-1]))
+
+def longestPalindrome(s: str) -> str:
+    """
+    Question 52
+
+    Longest Palindromic Substring
+
+    Given a string s, return the longest palindromic substring in s.
+    """
+    N = len(s)
+    LongestPalindrome = collections.namedtuple('LongestPalindrome', 'distance indexes')
+
+    longest = LongestPalindrome(0, (0, 0))
+
+    def check_palindrome_and_expand_outward(left: int, right: int, N: int):
+        nonlocal longest
+        while left >= 0 and right <= N - 1 and s[left] == s[right]:
+            distance = right - left + 1
+            if longest.distance < distance:
+                longest = LongestPalindrome(distance, (left, right))
+            
+            left -= 1
+            right += 1
+
+    
+    for i in range(N):
+        check_palindrome_and_expand_outward(i, i, N)
+        check_palindrome_and_expand_outward(i, i + 1, N)
+
+    start, end = longest.indexes;
+
+    return s[start: end + 1]
