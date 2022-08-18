@@ -2259,3 +2259,72 @@ def climbStairs(n: int, cache = {}) -> int:
     if n in cache: return cache[n]
     cache[n] = climbStairs(n-1) + climbStairs(n-2)
     return cache[n]
+
+def rob(nums: List[int]) -> int:
+    """
+    Question 50
+
+    You are a professional robber planning to rob houses along a street. 
+    Each house has a certain amount of money stashed, the only constraint stopping you from 
+    robbing each of them is that adjacent houses have security systems connected and it will 
+    automatically contact the police if two adjacent houses were broken into on the same night.
+    Given an integer array nums representing the amount of money of each house, 
+    return the maximum amount of money you can rob tonight without alerting the police.
+    """
+    
+    last, second_last = 0, 0
+
+    # [second_last, last, n, n+1, n+2, n-1]
+    for n in nums:
+        temp = max(n + second_last, last)
+        second_last = last
+        last = temp
+    
+    return last
+    
+
+def rob(nums: List[int]) -> int:
+    """
+    Question 50
+
+    You are a professional robber planning to rob houses along a street. 
+    Each house has a certain amount of money stashed, the only constraint stopping you from 
+    robbing each of them is that adjacent houses have security systems connected and it will 
+    automatically contact the police if two adjacent houses were broken into on the same night.
+    Given an integer array nums representing the amount of money of each house, 
+    return the maximum amount of money you can rob tonight without alerting the police.
+    """
+    
+    N = len(nums)
+    memo = [-1] * N
+
+    def __rob(i):
+        if i < 0:
+            return 0
+
+        if memo[i] >= 0:
+            return memo[i]
+        
+        result = max(__rob(i - 2) + nums[i], __rob(i - 1))
+        memo[i] = result
+        return result
+
+    return __rob(N - 1)
+
+def robII(nums: List[int]) -> int:
+    """
+    Question 51
+
+    House Robber II
+
+    You are a professional robber planning to rob houses along a street. 
+    Each house has a certain amount of money stashed. All houses at this place are arranged in a circle. 
+    That means the first house is the neighbor of the last one. 
+    Meanwhile, adjacent houses have a security system connected, 
+    and it will automatically contact the police if two adjacent 
+    houses were broken into on the same night.
+    Given an integer array nums representing the amount of money of each house, 
+    return the maximum amount of money you can rob tonight without alerting the police.
+    """
+
+    return max(nums[0], rob(nums[1:]), rob(nums[:-1]))
