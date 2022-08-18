@@ -2470,46 +2470,46 @@ def numDecodings(s: str) -> int:
     
     return dfs(0)
 
-# def coinChange(coins: List[int], amount: int) -> int:
-#     """
-#     Question 55
+def coinChange(coins: List[int], amount: int) -> int:
+    """
+    Question 55
 
-#     Coin Change
+    Coin Change
 
-#     You are given an integer array coins representing coins of different 
-#     denominations and an integer amount representing a total amount of money.
-#     Return the fewest number of coins that you need to make up that amount. 
-#     If that amount of money cannot be made up by any combination of the coins, return -1.
-#     You may assume that you have an infinite number of each kind of coin.
-#     """
-#     result = []
-#     count = None
-#     cache = {}
+    You are given an integer array coins representing coins of different 
+    denominations and an integer amount representing a total amount of money.
+    Return the fewest number of coins that you need to make up that amount. 
+    If that amount of money cannot be made up by any combination of the coins, return -1.
+    You may assume that you have an infinite number of each kind of coin.
+    """
+    result = []
+    count = None
+    cache = {}
 
-#     def dfs(i, current_sum, path, result):
-#         nonlocal count
+    def dfs(i, current_sum, path, result):
+        nonlocal count
 
-#         if (current_sum in cache):
-#             return cache[current_sum]
+        if (current_sum in cache):
+            return cache[current_sum]
 
-#         if current_sum > amount:
-#             return
+        if current_sum > amount:
+            return
         
-#         if current_sum == amount:
-#             count = len(path)
-#             result.append(path[:])
-#             return
+        if current_sum == amount:
+            count = len(path)
+            result.append(path[:])
+            return
 
-#         cache[current_sum] = len(path)
+        cache[current_sum] = len(path)
 
-#         for idx in reversed(range(i, len(coins))):
-#             coin = coins[idx]
-#             path.append(coin)
-#             dfs(idx, current_sum + coin, path, result)
-#             path.pop()
+        for idx in reversed(range(i, len(coins))):
+            coin = coins[idx]
+            path.append(coin)
+            dfs(idx, current_sum + coin, path, result)
+            path.pop()
     
-#     dfs(0, 0, [], result)
+    dfs(0, 0, [], result)
 
-#     print(result)
+    print(result)
 
-# coinChange(coins = [1,3,4, 5], amount = 7)
+coinChange(coins = [1,3,4, 5], amount = 7)
