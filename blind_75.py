@@ -2090,3 +2090,146 @@ def pacificAtlantic(heights: List[List[int]]) -> List[List[int]]:
                 result.append([i, j])
     return result
 
+
+def canFinish(numCourses: int, prerequisites: List[List[int]]) -> bool:
+    """
+    Question 45
+
+    Course Schedule
+
+    There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. 
+    You are given an array prerequisites where prerequisites[i] = [ai, bi] 
+    indicates that you must take course bi first if you want to take course ai.
+    For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
+    Return true if you can finish all courses. Otherwise, return false.
+    """
+
+    def dfs(graph, visited, i):
+        # if ith node is marked as being visited, then a cycle is found
+        if visited[i] == -1:
+            return False
+        # if it is done visted, then do not visit again
+        if visited[i] == 1:
+            return True
+        # mark as being visited
+        visited[i] = -1
+
+        for node in graph[i]:
+            if not dfs(graph, visited, node):
+                return False
+
+        # after visit all the neighbours, mark it as done visited
+        visited[i] = 1
+        return True
+
+    graph = [[] for _ in range(numCourses)]
+    visited = [0 for _ in range(numCourses)]
+    # create graph
+    for pair in prerequisites:
+        x, y = pair
+        graph[x].append(y)
+
+    # visit each node
+    for i in range(numCourses):
+        if not dfs(graph, visited, i):
+            return False
+    return True
+
+
+def canFinishDeclaritive(numCourses: int, prerequisites: List[List[int]]) -> bool:
+    """
+    Question 45
+
+    Course Schedule
+
+    There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. 
+    You are given an array prerequisites where prerequisites[i] = [ai, bi] 
+    indicates that you must take course bi first if you want to take course ai.
+    For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
+    Return true if you can finish all courses. Otherwise, return false.
+    """
+    class State(Enum):
+        TO_VISIT = 0
+        VISITING = 1
+        VISITED = 2
+    
+    def build_graph():
+        graph = collections.defaultdict(list)
+        for src, des in prerequisites:
+            graph[src].append(des)
+
+        return graph
+
+    def dfs(v):
+        if visited[v] == State.VISITED:
+            return False
+        
+        if visited[v] == State.VISITING:
+            return True
+
+        visited[v] = State.VISITING
+
+        for w in graph[v]:
+            if not dfs(w): return False
+        
+        visited[v] = State.VISITED
+        return True
+
+
+    graph = build_graph()
+    visited = collections.defaultdict(State)
+
+    for i in range(numCourses):
+        if not dfs(i):
+            return False
+    return True
+
+def canFinishDeclaritive(numCourses: int, prerequisites: List[List[int]]) -> bool:
+    """
+    Question 45
+
+    Course Schedule
+
+    There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. 
+    You are given an array prerequisites where prerequisites[i] = [ai, bi] 
+    indicates that you must take course bi first if you want to take course ai.
+    For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
+    Return true if you can finish all courses. Otherwise, return false.
+    """
+    class State(Enum):
+        TO_VISIT = 0
+        VISITING = 1
+        VISITED = 2
+    
+    def build_graph():
+        graph = collections.defaultdict(GraphNode)
+        for src, des in prerequisites:
+            node = GraphNode(src);
+            node.neighbors = [des]
+
+            graph[src] = node
+
+        return graph
+
+    def dfs(node: GraphNode):
+        if visited.get(node.val, State.TO_VISIT) == State.VISITED:
+            return False
+
+        visited[node.val] = State.VISITED
+
+        for w in graph[node.val]:
+            if not dfs(w): return False
+        
+        visited[node.val] = State.TO_VISIT
+
+        return True
+
+
+    graph = build_graph()
+    visited = collections.defaultdict(State)
+
+    for node in graph:
+        if not dfs(node):
+            return False
+
+    return True
