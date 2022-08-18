@@ -2233,3 +2233,29 @@ def canFinishDeclaritive(numCourses: int, prerequisites: List[List[int]]) -> boo
             return False
 
     return True
+
+def countComponenets():
+    """
+    Question 46
+
+    Number of Connected Components in Graph
+    """
+    pass
+
+# missing graph problems
+
+def climbStairs(n: int, cache = {}) -> int:
+    """
+    Question 49
+
+    Climbing Stairs
+
+    You are climbing a staircase. It takes n steps to reach the top.
+    Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+    """
+    if n == 0: return 1
+    if n < 0: return 0
+
+    if n in cache: return cache[n]
+    cache[n] = climbStairs(n-1) + climbStairs(n-2)
+    return cache[n]
