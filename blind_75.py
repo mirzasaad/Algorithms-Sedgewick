@@ -2360,3 +2360,28 @@ def longestPalindrome(s: str) -> str:
     start, end = longest.indexes;
 
     return s[start: end + 1]
+
+def countSubstrings(s: str) -> int:
+    """
+    Question 53
+
+    Palindromic Substrings
+
+    Given a string s, return the number of palindromic substrings in it.
+    A string is a palindrome when it reads the same backward as forward.
+    A substring is a contiguous sequence of characters within the string.
+    """
+    count = [0]
+    N = len(s)
+
+    def count_substring(left: int, right: int, N: int):
+        while left >= 0 and right <= N and s[left] == s[right]:
+            count[0] += 1
+            left -= 1
+            right += 1
+    
+    for i in range(N):
+        count_substring(i, i, N - 1)
+        count_substring(i, i + 1, N - 1)
+
+    return count[-1]
