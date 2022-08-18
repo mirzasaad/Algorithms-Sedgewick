@@ -1948,3 +1948,99 @@ def numIslands(grid: List[List[str]]) -> int:
 
     return count
 
+
+class GraphNode:
+    def __init__(self, val=0, neighbors=None):
+        self.val = val
+        self.neighbors = neighbors if neighbors is not None else []
+        self.visited = False;
+
+
+def cloneGraph(node: 'GraphNode') -> 'GraphNode':
+    """
+    Question 43
+
+    Clone Graph
+
+    Given a reference of a node in a connected undirected graph.
+    Return a deep copy (clone) of the graph.
+    Each node in the graph contains a value (int) and a list (List[Node]) of its neighbors.
+
+    class Node {
+        public int val;
+        public List<Node> neighbors;
+    }
+
+
+    Test case format:
+
+    For simplicity, each node's value is the same as the node's index (1-indexed). 
+    For example, the first node with val == 1, the second node with val == 2, and so on. 
+    The graph is represented in the test case using an adjacency list.
+    An adjacency list is a collection of unordered lists used to represent a finite graph. 
+    Each list describes the set of neighbors of a node in the graph.
+    The given node will always be the first node with val = 1. 
+    You must return the copy of the given node as a reference to the cloned graph.
+    """
+    def clone(node: GraphNode):
+        if not node:
+            return None
+
+        if node.val in visited:
+            return visited[node.val]
+
+        visited[node.val] = GraphNode(node.val)
+
+        for neigh in node.neighbors:
+            visited[node.val].neighbors.append(clone(neigh))
+
+        return visited[node.val]
+
+    visited = collections.defaultdict(GraphNode)
+    return clone(node)
+
+
+def cloneGraphIterative(node: 'GraphNode') -> 'GraphNode':
+    """
+    Question 43
+
+    Clone Graph
+
+    Given a reference of a node in a connected undirected graph.
+    Return a deep copy (clone) of the graph.
+    Each node in the graph contains a value (int) and a list (List[Node]) of its neighbors.
+
+    class Node {
+        public int val;
+        public List<Node> neighbors;
+    }
+
+
+    Test case format:
+
+    For simplicity, each node's value is the same as the node's index (1-indexed). 
+    For example, the first node with val == 1, the second node with val == 2, and so on. 
+    The graph is represented in the test case using an adjacency list.
+    An adjacency list is a collection of unordered lists used to represent a finite graph. 
+    Each list describes the set of neighbors of a node in the graph.
+    The given node will always be the first node with val = 1. 
+    You must return the copy of the given node as a reference to the cloned graph.
+    """
+    if not node:
+        return None
+
+    graph, cloned_graph = collections.deque(
+        [node]), {node.val: GraphNode(node.val)}
+
+    while graph:
+        node = graph.popleft()
+
+        for neighbour in node.neighbors:
+            if not neighbour.val in cloned_graph:
+                cloned_graph[neighbour.val] = GraphNode(neighbour.val)
+                graph.append(neighbour)
+
+        cloned_graph[node.val].neighbors.append(GraphNode(neighbour.val))
+
+    return cloned_graph[node.val]
+
