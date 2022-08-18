@@ -1,7 +1,9 @@
 
 import collections
+from enum import Enum
 from hashlib import sha256
 import heapq
+import numbers
 import string
 from typing import List, Optional
 
@@ -1855,6 +1857,7 @@ def combinationSum(candidates: List[int], target: int) -> List[List[int]]:
 
     return result
 
+
 def exist(board: List[List[str]], word: str) -> bool:
     """
     Question 41
@@ -1881,7 +1884,7 @@ def exist(board: List[List[str]], word: str) -> bool:
 
         if letter == '#' or letter != word[index]:
             return False
-        
+
         board[i][j] = '#'
 
         right = dfs(board, i + 1, j, m, n, word_length, index + 1)
@@ -1905,14 +1908,43 @@ def exist(board: List[List[str]], word: str) -> bool:
 
     return False
 
-board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]] 
-word = "ABCCED"
 
-board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
-word = "SEE"
+def numIslands(grid: List[List[str]]) -> int:
+    """
+    Question 42
 
-board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
-word = "ABCB"
+    Number of Islands
 
-print(exist(board, word))
+    Given an m x n 2D binary grid grid which represents a map of 
+    '1's (land) and '0's (water), return the number of islands.
+    An island is surrounded by water and is formed by connecting adjacent 
+    lands horizontally or vertically. You may assume all four edges of the 
+    grid are all surrounded by water.
+    """
+
+    if not any(grid):
+        return 0
+
+    def dfs(i, j, m, n):
+        if i < 0 or j < 0 or i >= m or j >= n:
+            return
+
+        if (grid[i][j] == '0'):
+            return
+
+        grid[i][j] = '0'
+
+        for x, y in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+            dfs(i + x, j + y, m, n)
+
+    M, N = len(grid), len(grid[0])
+    count = 0
+
+    for i in range(M):
+        for j in range(N):
+            if grid[i][j] == '1':
+                count += 1
+                dfs(i, j, M, N)
+
+    return count
 
