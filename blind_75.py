@@ -2044,3 +2044,49 @@ def cloneGraphIterative(node: 'GraphNode') -> 'GraphNode':
 
     return cloned_graph[node.val]
 
+
+def pacificAtlantic(heights: List[List[int]]) -> List[List[int]]:
+    """
+    Question 44
+
+    Pacific Atlantic Water Flow
+
+    There is an m x n rectangular island that borders both the Pacific Ocean and Atlantic Ocean. 
+    The Pacific Ocean touches the island's left and top edges, and the Atlantic Ocean touches the island's right and bottom edges.
+    The island is partitioned into a grid of square cells. You are given an m x n integer matrix heights where heights[r][c] 
+    represents the height above sea level of the cell at coordinate (r, c).
+    The island receives a lot of rain, and the rain water can flow to neighboring 
+    cells directly north, south, east, and west if the neighboring cell's height is less 
+    than or equal to the current cell's height. Water can flow from any cell adjacent to an ocean into the ocean.
+    Return a 2D list of grid coordinates result where result[i] = [ri, ci] 
+    denotes that rain water can flow from cell (ri, ci) to both the Pacific and Atlantic oceans.
+    """
+    def dfs(heights, i, j, m, n, visited):
+        visited[i][j] = True
+
+        for direction in directions:
+            x, y = i + direction[0], j + direction[1]
+            if x < 0 or x >= m or y < 0 or y >= n or visited[x][y] or heights[x][y] < heights[i][j]:
+                continue
+            dfs(heights, x, y, m, n, visited)
+
+    result = []
+    M, N = len(heights), len(heights[0])
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    p_visited = [[False for _ in range(N)] for _ in range(M)]
+    a_visited = [[False for _ in range(N)] for _ in range(M)]
+
+    for i in range(M):
+        dfs(heights, i, 0, M, N, p_visited)
+        dfs(heights, i, N - 1, M, N, a_visited)
+
+    for i in range(N):
+        dfs(heights, 0, i, M, N, p_visited)
+        dfs(heights, M - 1, i, M, N, p_visited)
+
+    for i in range(M):
+        for j in range(N):
+            if p_visited[i][j] and a_visited[i][j]:
+                result.append([i, j])
+    return result
+
