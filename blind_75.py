@@ -3,9 +3,12 @@ import collections
 from enum import Enum
 from hashlib import sha256
 import heapq
-import numbers
+from pyparsing import printables
+from visualiser.visualiser import Visualiser as vs
 import string
 from typing import List, Optional
+
+from comonn import printTable
 
 # https://neetcode.io/
 
@@ -2482,34 +2485,386 @@ def coinChange(coins: List[int], amount: int) -> int:
     If that amount of money cannot be made up by any combination of the coins, return -1.
     You may assume that you have an infinite number of each kind of coin.
     """
-    result = []
-    count = None
+
     cache = {}
 
-    def dfs(i, current_sum, path, result):
-        nonlocal count
-
+    def dfs(current_sum):
         if (current_sum in cache):
             return cache[current_sum]
-
-        if current_sum > amount:
-            return
         
-        if current_sum == amount:
-            count = len(path)
-            result.append(path[:])
-            return
+        if current_sum == 0:
+            return []
 
-        cache[current_sum] = len(path)
+        if current_sum < 0:
+            return None
 
-        for idx in reversed(range(i, len(coins))):
-            coin = coins[idx]
-            path.append(coin)
-            dfs(idx, current_sum + coin, path, result)
-            path.pop()
+        smallest = None
+
+        for coin in coins:
+            remainder = current_sum - coin
+            subResult = dfs(remainder)
+            if subResult is not None:
+                combination = subResult + [coin]
+                if not smallest or len(combination) < len(smallest):
+                    smallest = combination
+        
+        cache[current_sum] = smallest
+        return smallest
     
-    dfs(0, 0, [], result)
+    return dfs(amount)
 
-    print(result)
+def maxProduct(nums: List[int]) -> int:
+    """
+    Question 56
 
-coinChange(coins = [1,3,4, 5], amount = 7)
+    Maximum Product Subarray
+
+    Given an integer array nums, find a contiguous non-empty subarray 
+    within the array that has the largest product, and return the product.
+    The test cases are generated so that the answer will fit in a 32-bit integer.
+    A subarray is a contiguous subsequence of the array.
+    """
+
+    curMin, curMax = 1, 1
+    result = (-1 << 63) + 1
+
+    for num in nums:
+        candidate = [num * curMax, num * curMin, num]
+        curMax = max(candidate)
+        curMin = min(candidate)
+        result = max(curMax, curMin, result)
+    return result
+
+def wordBreak(s: str, wordDict: List[str]) -> bool:
+    """
+    Question 57
+
+    Word Break
+
+    Given a string s and a dictionary of strings wordDict, return true if s can 
+    be segmented into a space-separated sequence of one or more dictionary words.
+    Note that the same word in the dictionary may be reused multiple times in the segmentation.
+    """
+
+    def fn(sub_string: str, cache=collections.defaultdict()):
+        if sub_string in cache:
+            return cache[sub_string]
+        
+        if sub_string == '':
+            return True
+
+        for word in wordDict:
+            if sub_string.startswith(word):
+                remainder = sub_string[len(word):]
+                subresult = fn(remainder, cache)
+                cache[remainder] = subresult
+                if subresult:
+                    return True
+        
+        cache[sub_string] = False
+        return False
+
+    return fn(s)
+
+
+def lengthOfLIS(nums: List[int]) -> int:
+    """
+    Question 58
+
+    Longest Increasing Subsequence
+
+    Given an integer array nums, return the length of the longest strictly increasing subsequence.
+    A subsequence is a sequence that can be derived from an array by deleting some or no elements 
+    without changing the order of the remaining elements. 
+    For example, [3,6,2,7] is a subsequence of the array [0,3,1,6,2,2,7].
+    """
+    @vs(node_properties_kwargs={"shape":"record", "color":"#f57542", "style":"filled", "fillcolor":"grey"})
+    def fn(n):
+        if n in cache:
+            return cache[n]
+        if n == 1:
+            return 1
+
+        maximum = 1
+
+        for i in range(1, n):
+            resultSub = fn(i)
+            if nums[i - 1] < nums[n - 1]:
+                maximum = max(maximum, resultSub + 1)
+            cache[n] = maximum
+
+        return maximum
+    cache = {}
+    return fn(len(nums))
+
+def lengthOfLISDP(nums: List[int]) -> int:
+    """
+    Question 58
+
+    Longest Increasing Subsequence
+
+    Given an integer array nums, return the length of the longest strictly increasing subsequence.
+    A subsequence is a sequence that can be derived from an array by deleting some or no elements 
+    without changing the order of the remaining elements. 
+    For example, [3,6,2,7] is a subsequence of the array [0,3,1,6,2,2,7].
+    """
+    N = len(nums)
+    dp = [1] * N
+
+    for i in range(N - 1, -1, -1):
+        for j in range(i + 1, N):
+            if nums[i] < nums[j]:
+                dp[i] = max(dp[j] + 1, dp[i])
+    
+    return max(dp)
+
+def lengthOfLISDP(nums: List[int]) -> int:
+    """
+    Question 58
+
+    Longest Increasing Subsequence
+
+    Given an integer array nums, return the length of the longest strictly increasing subsequence.
+    A subsequence is a sequence that can be derived from an array by deleting some or no elements 
+    without changing the order of the remaining elements. 
+    For example, [3,6,2,7] is a subsequence of the array [0,3,1,6,2,2,7].
+    """
+    N = len(nums)
+    dp = [1] * N
+
+    for i in range(1, N):
+        for j in range(0, i):
+            if nums[j] < nums[i]:
+                dp[i] = max(dp[j] + 1, dp[i])
+
+    return dp[N]
+    
+def uniquePaths(m: int, n: int) -> int:
+    """
+    Question 59
+
+    Unique Paths
+
+    There is a robot on an m x n grid. The robot is initially located at the top-left corner (i.e., grid[0][0]). 
+    The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1]). 
+    The robot can only move either down or right at any point in time.
+    Given the two integers m and n, return the number of possible unique paths 
+    that the robot can take to reach the bottom-right corner.
+    The test cases are generated so that the answer will be less than or equal to 2 * 109.
+    """
+
+    def fn(i, j):
+        if (i, j) in cache:
+            return cache[(i, j)]
+        
+        if i == m - 1 and j == n - 1:
+            return 1
+        
+        if i >= m or j >= n:
+            return 0
+        
+        subResult = fn(i + 1, j) + fn(i, j + 1)
+        cache[(i, j)] = subResult
+        return subResult
+    
+    cache = {}
+    return fn(0, 0)
+
+def longestCommonSubsequence(text1: str, text2: str) -> int:
+    """
+    Question 60
+
+    Longest Common Subsequence
+
+    Given two strings text1 and text2, return the length of their longest common subsequence. 
+    If there is no common subsequence, return 0.
+    A subsequence of a string is a new string generated from the original string with some characters (can be none) 
+    deleted without changing the relative order of the remaining characters.
+    For example, "ace" is a subsequence of "abcde".
+    A common subsequence of two strings is a subsequence that is common to both strings.
+    """
+    M, N = len(text1) + 1, len(text2) + 1
+    dp = [[0] * N for _ in range(M)]
+
+    for i in range(1, M):
+        for j in range(1, N):
+            if text1[i - 1] == text2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+
+    printTable(dp)
+    return dp[M - 1][N - 1]
+
+def maxSubArray(nums: List[int]) -> int:
+    """
+    Question 61
+
+    Maximum Subarray
+
+    Given an integer array nums, find the contiguous subarray (containing at least one number) 
+    which has the largest sum and return its sum.
+    A subarray is a contiguous part of an array.
+    """
+    N = len(nums)
+    dp = [0] * (N + 1)
+    dp[0] = nums[0]
+    max_so_far = nums[0]
+
+    for i in range(N):
+        dp[i] = max(dp[i - 1] + nums[i], nums[i])
+        max_so_far = max(max_so_far, dp[i])
+
+    return max_so_far
+
+def canJump(nums: List[int]) -> bool:
+    """
+    Question 62 
+
+    Jump Game
+
+    You are given an integer array nums. You are initially positioned at the array's first index, 
+    and each element in the array represents your maximum jump length at that position.
+    Return true if you can reach the last index, or false otherwise.
+    """
+    current = 0;
+    i = 0
+    N = len(nums)
+    
+    while i <= current and i < N:
+        current = max(nums[i] + i, current)
+        i += 1
+    return i >= N
+
+def canJump(nums: List[int]) -> bool:
+    """
+    Question 62 
+
+    Jump Game
+
+    You are given an integer array nums. You are initially positioned at the array's first index, 
+    and each element in the array represents your maximum jump length at that position.
+    Return true if you can reach the last index, or false otherwise.
+    """
+    current = 0;
+    i = 0
+    N = len(nums)
+    
+    while i <= current and i < N:
+        current = nums[i] + i
+        i += 1
+    return i >= N
+
+def canJump(nums: List[int]) -> bool:
+    """
+    Question 62 
+
+    Jump Game
+
+    You are given an integer array nums. You are initially positioned at the array's first index, 
+    and each element in the array represents your maximum jump length at that position.
+    Return true if you can reach the last index, or false otherwise.
+    """
+    N = len(nums)
+    last = nums[N - 1]
+    for i in reversed(range(N - 1)):
+        if nums[i] + i >= last:
+            last = i
+    
+    return last <= 0
+
+# print(canJump([2,3,1,1,4]))
+# print(canJump([3,2,1,0,4]))
+
+def insert(intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+    """
+    Question 63
+
+    Insert Interval
+
+    You are given an array of non-overlapping intervals intervals where intervals[i] = [starti, endi] 
+    represent the start and the end of the ith interval and intervals is sorted in ascending order by starti. 
+    You are also given an interval newInterval = [start, end] that represents the start and end of another interval.
+    Insert newInterval into intervals such that intervals is still sorted in ascending order by starti 
+    and intervals still does not have any overlapping intervals (merge overlapping intervals if necessary).
+
+    Return intervals after the insertion.
+    """
+    result = []
+    
+    for index, interval in enumerate(intervals):
+        if newInterval[1] < interval[0]:
+            result.append(newInterval) 
+            return result + intervals[index:]
+        elif newInterval[0] > interval[1]:
+            result.append(interval)
+        else:
+            newInterval = [min(newInterval[0], interval[0]), max(newInterval[1], interval[1])]
+    
+    result.append(newInterval)
+
+    return result
+
+def merge(intervals: List[List[int]]) -> List[List[int]]:
+    """
+    Question 64
+
+    Merge Intervals
+
+    Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, 
+    and return an array of the non-overlapping intervals that cover all the intervals in the input.
+    """
+    if not intervals:
+        return []
+
+    intervals.sort(key=lambda interval: interval[0])
+    current = intervals[0]
+    result = []
+
+    for _, interval in enumerate(intervals):
+        if current[1] < interval[0]:
+            result.append(current)
+            current = interval
+        elif current[0] > interval[1]:
+            result.append(interval)
+        else:
+            current = [
+                min(current[0], interval[0]),
+                max(current[1], interval[1]),
+            ]
+        
+    result.append(current)
+
+    return result
+
+# print(merge(intervals = [[1,3],[2,6],[8,10],[15,18]]))
+# print(merge([[1,4],[4,5]]))
+
+def eraseOverlapIntervals(intervals: List[List[int]]) -> int:
+    """
+    Question 65
+
+    Non-overlapping Intervals
+
+    Given an array of intervals intervals where intervals[i] = [starti, endi], 
+    return the minimum number of intervals you need to remove to make the 
+    rest of the intervals non-overlapping.
+    """
+    if not intervals:
+        return 0
+
+    intervals = sorted(intervals, key=lambda x: x[1])
+    current_end = intervals[0][1]
+    count = 0
+
+    for i in range(1, len(intervals)):
+        start, end = intervals[i]
+        if start < current_end:
+            count += 1
+        else:
+            current_end = end
+    return count
+
+print(eraseOverlapIntervals(intervals = [[1,2],[2,3],[3,4],[1,3]]))
+print(eraseOverlapIntervals(intervals = [[1,2],[1,2],[1,2]]))
+print(eraseOverlapIntervals(intervals = [[1,2],[2,3]]))
