@@ -3,6 +3,7 @@ import collections
 from enum import Enum
 from hashlib import sha256
 import heapq
+from matplotlib import mathtext
 from pyparsing import printables
 from visualiser.visualiser import Visualiser as vs
 import string
@@ -2837,9 +2838,6 @@ def merge(intervals: List[List[int]]) -> List[List[int]]:
 
     return result
 
-# print(merge(intervals = [[1,3],[2,6],[8,10],[15,18]]))
-# print(merge([[1,4],[4,5]]))
-
 def eraseOverlapIntervals(intervals: List[List[int]]) -> int:
     """
     Question 65
@@ -2865,6 +2863,109 @@ def eraseOverlapIntervals(intervals: List[List[int]]) -> int:
             current_end = end
     return count
 
-print(eraseOverlapIntervals(intervals = [[1,2],[2,3],[3,4],[1,3]]))
-print(eraseOverlapIntervals(intervals = [[1,2],[1,2],[1,2]]))
-print(eraseOverlapIntervals(intervals = [[1,2],[2,3]]))
+def canAttendeMeetings(intervals: List[List[int]]) -> int:
+    """
+    Question 66
+
+    Meeting Rooms
+
+    Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), 
+    determine if a person could attend all meetings.
+    """
+
+    if not intervals:
+        return True
+
+    intervals = sorted(intervals, key=lambda x: x[1])
+    current_end = intervals[0][1]
+
+    for i in range(1, len(intervals)):
+        start, end = intervals[i]
+        if start < current_end:
+            return False
+        else:
+            current_end = end
+    return True
+
+def minMeetingRooms(intervals: List[List[int]]) -> int:
+    """
+    Question 67
+
+    Meeting Rooms II
+
+    Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), 
+    find the minimum number of conference rooms required.)
+    """
+
+    intervals = sorted(intervals, key=lambda x: x[1])
+    current_end = intervals[0][1]
+    count = 1
+
+    for i in range(1, len(intervals)):
+        start, end = intervals[i]
+        if start < current_end:
+            count += 1
+        else:
+            current_end = end
+    return count
+
+def rotate(matrix: List[List[int]]) -> None:
+    """
+    Question 68
+
+    Rotate Image
+
+    You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise).
+    You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. 
+    DO NOT allocate another 2D matrix and do the rotation.  
+    """
+    left, right = 0, len(matrix) - 1
+
+    while left < right:
+        for i in range(right - left):
+            temp = matrix[left][left + i]
+
+            matrix[left][left + i] = matrix[right - i][left]
+            matrix[right - i][left] = matrix[right][right - i]
+            matrix[right][right - i] = matrix[left + i][right]
+            matrix[left + i][right] = temp
+        
+        right -= 1
+        left += 1
+
+    return matrix
+
+def spiralOrder(matrix: List[List[int]]) -> List[int]:
+    """
+    Question 69
+
+    Spiral Matrix
+
+    Given an m x n matrix, return all elements of the matrix in spiral order.
+    """
+
+    result = []
+    row, column = 0, 0
+    rowEnd, colEnd = len(matrix), len(matrix[0])
+    N = rowEnd * colEnd
+
+    while row <= rowEnd and column <= colEnd:
+        for i in range(column, colEnd):
+            result.append(matrix[row][i])
+        row += 1
+
+        for i in range(row, rowEnd):
+            result.append(matrix[i][colEnd])
+        colEnd -= 1
+
+        if len(result) == N:
+            continue
+
+        for i in reversed(range(column, colEnd)):
+            result.append(matrix[rowEnd][i])
+        rowEnd -= 1
+
+        for i in reversed(range(row, rowEnd)):
+            result.append(matrix[i][column])
+        column += 1
+
