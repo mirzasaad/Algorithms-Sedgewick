@@ -1,4 +1,5 @@
 
+from asyncio import FastChildWatcher
 import collections
 from enum import Enum
 from hashlib import sha256
@@ -1650,7 +1651,14 @@ class Trie:
         return current.is_word
 
     def startsWith(self, prefix: str) -> bool:
-        return self.search(prefix)
+        current = self._root
+
+        for letter in prefix:
+            current = current.children.get(letter)
+            if current is None:
+                return False
+
+        return True
 
 
 class WordDictionary:
@@ -1691,7 +1699,6 @@ class WordDictionary:
                 return
 
             if d == len(word):
-                print(node, node.is_word)
                 if node.is_word:
                     response[0] = node.is_word
                 return
@@ -2037,14 +2044,15 @@ def cloneGraphIterative(node: 'GraphNode') -> 'GraphNode':
         [node]), {node.val: GraphNode(node.val)}
 
     while graph:
-        node = graph.popleft()
+        current = graph.popleft()
+        current_clone = cloned_graph[current.val]
 
-        for neighbour in node.neighbors:
+        for neighbour in current.neighbors:
             if not neighbour.val in cloned_graph:
                 cloned_graph[neighbour.val] = GraphNode(neighbour.val)
                 graph.append(neighbour)
 
-        cloned_graph[node.val].neighbors.append(GraphNode(neighbour.val))
+            current_clone.neighbors.append(cloned_graph[neighbour.val])
 
     return cloned_graph[node.val]
 
@@ -2306,8 +2314,8 @@ def rob(nums: List[int]) -> int:
         if i < 0:
             return 0
 
-        if memo[i] >= 0:
-            return memo[i]
+        if i == 0:
+            return nums[i]
         
         result = max(__rob(i - 2) + nums[i], __rob(i - 1))
         memo[i] = result
@@ -2473,6 +2481,39 @@ def numDecodings(s: str) -> int:
         return ways
     
     return dfs(0)
+
+def coinChange(coins: List[int], amount: int) -> int:
+
+    CoinChange = collections.namedtuple('CoinChange', 'numOfCoins path')
+    memo = collections.defaultdict(CoinChange)
+    
+    def __coinChange(current_amount):
+        if current_amount in memo:
+            return memo[current_amount]
+        
+        if current_amount < 0:
+            return None
+        
+        if current_amount == 0:
+            return CoinChange(0, [])
+        
+        minimum = None
+        
+        for coin in coins:
+            subResult = __coinChange(current_amount - coin)
+            if subResult is not None:
+                
+                if minimum is None or (minimum and subResult.numOfCoins < minimum.numOfCoins):
+                    minimum = CoinChange(subResult.numOfCoins + 1, subResult.path + [coin])
+        
+        memo[current_amount] = minimum
+        
+        return memo[current_amount]
+    
+    result = __coinChange(amount)
+        
+    return __coinChange(amount).numOfCoins if result else -1
+
 
 def coinChange(coins: List[int], amount: int) -> int:
     """
@@ -2969,3 +3010,354 @@ def spiralOrder(matrix: List[List[int]]) -> List[int]:
             result.append(matrix[i][column])
         column += 1
 
+def setZeroes(matrix: List[List[int]]) -> None:
+    """
+    Question 70
+
+    Set Matrix Zeroes
+
+    Given an m x n integer matrix matrix, if an element is 0, set its entire row and column to 0's.
+    You must do it in place.
+    """
+    if not any(matrix):
+        return
+
+    m = len(matrix)
+    n = len(matrix[0])
+
+    zero_rows = [False] * m
+    zero_cols = [False] * n
+
+    for i in range(m):
+        for j in range(n):
+            if matrix[i][j] == 0:
+                zero_cols[j] = zero_rows[i] = True
+
+    for i in range(m):
+        for j in range(n):
+            if zero_rows[i]:
+                matrix[i][j] = 0
+            if zero_cols[j]:
+                matrix[i][j] = 0
+    
+    return matrix
+
+def setZeroes(matrix: List[List[int]]) -> None:
+    """
+    Question 70
+
+    Set Matrix Zeroes
+
+    Given an m x n integer matrix matrix, if an element is 0, set its entire row and column to 0's.
+    You must do it in place.
+    """
+    if not any(matrix):
+        return
+
+    m = len(matrix)
+    n = len(matrix[0])
+
+    first_row_has_zero = False
+    first_col_has_zero = False
+
+    for i in range(m):
+        for j in range(n):
+            if matrix[i][j] == 0:
+                if i == 0:
+                    first_row_has_zero = True
+                if j == 0:
+                    first_col_has_zero = True
+                matrix[0][j] = matrix[i][0] = 0
+                
+
+    for i in range(1, m):
+        for j in range(1, n):
+            matrix[i][j] = 0 if matrix[0][j] == 0 or matrix[i][0] == 0 else matrix[i][j]
+
+    if first_row_has_zero:
+        for i in range(n):
+            matrix[0][i] = 0
+
+    if first_col_has_zero:
+        for i in range(m):
+            matrix[i][0] = 0
+
+    return matrix
+
+def hammingWeight(n: int) -> int:
+    """
+    Question 71
+
+    Number of 1 Bits
+
+    Write a function that takes an unsigned integer and returns the number of '1' bits it has (also known as the Hamming weight).
+
+    Note:
+
+    Note that in some languages, such as Java, there is no unsigned integer type. In this case, the input will be given as a signed integer type. It should not affect your implementation, as the integer's internal binary representation is the same, whether it is signed or unsigned.
+    In Java, the compiler represents the signed integers using 2's complement notation. Therefore, in Example 3, the input represents the signed integer. -3.
+    """
+
+    count = 0
+    while n:
+        n = n & (n - 1)
+        count += 1
+    
+    return count
+
+def countBits(n: int) -> List[int]:
+    """
+    Question 72
+
+    Counting Bits
+
+    Given an integer n, return an array ans of length n + 1 such that for each i (0 <= i <= n), 
+    ans[i] is the number of 1's in the binary representation of i.
+    """
+
+    stack = []
+
+    for i in range(n + 1):
+        num = i
+        count_of_one_in_binary_representation = 0
+
+        while num:
+           count_of_one_in_binary_representation += num % 2
+           num //= 2
+        
+        stack.append(count_of_one_in_binary_representation)
+
+    return stack
+
+def reverseBits(n: int) -> int:
+    """
+    Question 73
+
+    Reverse Bits
+
+    Reverse bits of a given 32 bits unsigned integer.
+    """
+
+    result = 0
+
+    for _ in range(32):
+        result = result << 1
+        if n & 1 == 1:
+            result += 1
+        n >>= 1
+    
+    return result
+
+def missingNumber(nums: List[int]) -> int:
+    """
+    Question 74
+
+    Missing Number
+
+    Given an array nums containing n distinct numbers in the range [0, n], 
+    return the only number in the range that is missing from the array.
+    """
+    n = len(nums)
+    return ((n * (n + 1)) // 2) - sum(nums)
+
+def missingNumber(nums: List[int]) -> int:
+    """
+    Question 74
+
+    Missing Number
+
+    Given an array nums containing n distinct numbers in the range [0, n], 
+    return the only number in the range that is missing from the array.
+    """
+    n = len(nums)
+    result = n
+    for i in range(n):
+        result += (i - nums[i])
+
+    return result
+    
+def missingNumber(nums: List[int]) -> int:
+    """
+    Question 74
+
+    Missing Number
+
+    Given an array nums containing n distinct numbers in the range [0, n], 
+    return the only number in the range that is missing from the array.
+    """
+    result = 0
+    n = len(nums)
+
+    for i in range(n):
+        result = result ^ i ^ nums[i]
+
+    return result ^ n
+
+def getSum(a: int, b: int) -> int:
+    """
+    Question no 75
+
+    Sum of Two Integers
+
+    Given two integers a and b, return the sum of the two integers without using the operators + and -.
+    """
+
+    while b:
+        carry = a & b
+        a = a ^ b
+        b = carry << 1
+    
+    return a
+
+def coinChange(coins: List[int], amount: int) -> int:
+
+    CoinChange = collections.namedtuple('CoinChange', 'numOfCoins path')
+    memo = collections.defaultdict(CoinChange)
+    
+    def __coinChange(current_amount):
+        if current_amount in memo:
+            return memo[current_amount]
+        
+        if current_amount < 0:
+            return None
+        
+        if current_amount == 0:
+            return CoinChange(0, [])
+        
+        minimum = None
+        
+        for coin in coins:
+            subResult = __coinChange(current_amount - coin)
+            if subResult is not None:
+                
+                if minimum is None or (minimum and subResult.numOfCoins < minimum.numOfCoins):
+                    minimum = CoinChange(subResult.numOfCoins + 1, subResult.path + [coin])
+        
+        memo[current_amount] = minimum
+        
+        return memo[current_amount]
+    
+    result = __coinChange(amount)
+        
+    return __coinChange(amount).numOfCoins if result else -1
+
+def maxProduct(nums: List[int]) -> int:
+
+    running_max_prod, running_min_prod = 1, 1
+    best =  float('-inf')
+
+    for num in nums:
+        if num < 0:
+            running_max_prod, running_min_prod = running_min_prod, running_max_prod
+        
+        running_max_prod = max(num, running_max_prod * num)
+        running_min_prod = min(num, running_min_prod * num)
+        best = max(best, running_max_prod, running_min_prod)
+
+    return best
+
+def maxProduct(nums: List[int]) -> int:
+
+    prefix, suffix, max_so_far = 0, 0, float('-inf')
+    for i in range(len(nums)):
+        prefix = (prefix or 1) * nums[i]
+        suffix = (suffix or 1) * nums[~i]
+        max_so_far = max(max_so_far, prefix, suffix)
+    return max_so_far
+
+def maxProduct(nums: List[int]) -> int:
+    """
+    Question 56
+
+    Maximum Product Subarray
+
+    Given an integer array nums, find a contiguous non-empty subarray 
+    within the array that has the largest product, and return the product.
+    The test cases are generated so that the answer will fit in a 32-bit integer.
+    A subarray is a contiguous subsequence of the array.
+    """
+
+    curMin, curMax = 1, 1
+    result = (-1 << 63) + 1
+
+    for num in nums:
+        candidate = [num * curMax, num * curMin, num]
+        curMax = max(candidate)
+        curMin = min(candidate)
+        result = max(curMax, curMin, result)
+    return result
+
+def wordBreak(s: str, wordDict: List[str]) -> bool:
+    def fn(sub_string: str, cache=collections.defaultdict()):
+        if sub_string == '':
+            return True
+
+        for word in wordDict:
+            if sub_string.startswith(word):
+                remainer = sub_string[len(word):]
+                result = fn(remainer, cache)
+                if result:
+                    return True
+        
+        return False
+    
+    return fn(s)
+
+def insert(intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+    result = []
+
+    for interval in intervals:
+        if newInterval[1] < interval[0]:
+            result.append(newInterval)
+            return result + [interval]
+        elif newInterval[0] > interval[1]:
+            result.append(interval)
+        else:
+            newInterval = (
+                min(interval[0], newInterval[0]),
+                max(interval[1], newInterval[1])
+            )
+        
+    result.append(newInterval)
+    return result
+
+def spiralOrder(matrix: List[List[int]]) -> List[int]:
+    """
+    Question 69
+
+    Spiral Matrix
+
+    Given an m x n matrix, return all elements of the matrix in spiral order.
+    """
+
+    rowStart, colStart = 0, 0
+    rowEnd, colEnd = len(matrix) - 1, len(matrix[0]) - 1
+    result = []
+
+    while rowStart <= rowEnd and colStart <= colEnd:
+        for i in range(colStart, colEnd + 1):
+            result.append(matrix[rowStart][i])
+        rowStart += 1
+
+        for i in range(rowStart, rowEnd + 1):
+            result.append(matrix[i][colEnd])
+        colEnd -= 1
+        
+        # if len(result) == (len(matrix)) * (len(matrix[0])): continue
+        
+        for i in reversed(range(colStart, colEnd + 1)):
+            result.append(matrix[rowEnd][i])
+        rowEnd -= 1
+
+        for i in reversed(range(rowStart, rowEnd + 1)):
+            result.append(matrix[i][colStart])
+        colStart += 1
+
+    return result
+
+matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+matrix = spiralOrder(matrix)
+print(matrix)
+# for i in matrix:
+#     for j in i:
+#         print(j)
