@@ -22,3 +22,8 @@ digraph === bipartite
 euler path === traverse every edge once (a connected graph is euler if all vertices has even degree)
 hamitonian path === traverse every vertex once (not possible)
 
+euler path mussing
+https://www.geeksforgeeks.org/fleurys-algorithm-for-printing-eulerian-path/
+
+hamilton path is missing
+https://www.geeksforgeeks.org/hamiltonian-cycle-backtracking-6/

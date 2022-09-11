@@ -86,6 +86,15 @@ class Graph(object):
     def edges_size(self):
         return self._edges_size
 
+    def remove_edge(self, vertext_a, vertext_b):
+        if not self.has_edge(vertext_a, vertext_b) or vertext_a == vertext_b:
+            return
+
+        self._neighbours[vertext_a].remove(vertext_b)
+        self._neighbours[vertext_b].remove(vertext_a)
+
+        self._edges_size -= 1
+
     def add_edge(self, vertext_a, vertext_b):
         # 4.1.5 practice, no self cycle or parallel edges.
         if self.has_edge(vertext_a, vertext_b) or vertext_a == vertext_b:
