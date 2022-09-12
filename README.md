@@ -14,7 +14,7 @@ segment tree for sum
 fix kdtree visalizer and performance is slow bas comapred to bst look into it
 
 
-graph is digraph where vertices can be divided in groups
+graph is Bipartite where vertices can be divided in groups
 all acyclic graphs are bipartite graphs
 cyclic graphs with even degrees are bipartite
 digraph === bipartite
@@ -27,3 +27,7 @@ https://www.geeksforgeeks.org/fleurys-algorithm-for-printing-eulerian-path/
 
 hamilton path is missing
 https://www.geeksforgeeks.org/hamiltonian-cycle-backtracking-6/
+
+there is a difference between tringly connected and transitive close for directedGraph but means same thing for unidrected graph
+
+look into TopologicalWithDegree
