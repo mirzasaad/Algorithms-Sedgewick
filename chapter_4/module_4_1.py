@@ -5,13 +5,23 @@ import doctest
 from enum import Enum
 import random
 from collections import defaultdict, deque
-import re
 
-from numpy import number
+"""
+Nonrecursive depth-first search. Implement depth-first search in an undirected graph without using recursion.
 
-# from module_1_3 import Stack
+use an explicit stack
 
+Diameter and center of a tree. Given a connected graph with no cycles
+Diameter: design a linear-time algorithm to find the longest simple path in the graph. Center: design a linear-time algorithm to find a vertex such that its maximum distance from any other vertex is minimized.
 
+(diameter): to compute the diameter, pick a vertex ss; run BFS from ss; then run BFS again from the vertex that is furthest from ss.
+(center): middle vertices on the longest path.
+
+Euler cycle. An Euler cycle in a graph is a cycle (not necessarily simple) that uses every edge in the graph exactly one. Show that a connected graph has an Euler cycle if and only if every vertex has even degree. Design a linear-time algorithm to determine whether a graph has an Euler cycle, and if so, find one.
+
+Because in euler cycle every vertex must be visited from one edge and be departed from another.
+Traverse all the edges by, first randomly select one unvistied edge and then visit its arbitrary unvisited adjacent edge and so forth until there are no unvisited adjacent edges, if there are still unvisited edges, randomly select one and repeat the above process. If edge traversal of all times form a loop, then it has euler cycle.
+"""
 class Graph(object):
 
     """
@@ -426,6 +436,10 @@ class TwoColor(object):
 
     """
     Using Depth-First-Search algorithm to solve Two-Color problems.
+
+    graph is Bipartite where vertices can be divided in groups
+    all acyclic graphs are bipartite graphs
+    cyclic graphs with even degrees are bipartite
     >>> g = Graph()
     >>> test_data = [(0, 5), (2, 4), (2, 3), (1, 2), (0, 1), (3, 4), (3, 5), (0, 2)]
     >>> for a, b in test_data:
