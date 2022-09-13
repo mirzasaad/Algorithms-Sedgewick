@@ -19,6 +19,7 @@ Digraph: Design a linear-time algorithm to determine whether a digraph has a ver
 
 DAG:if it's reachable from every other vertex, then it must have 0 out degree, run dfs from this vertex on the reverse graph
 Digraph:compute the strongly connected components(Kosaraju's algorithm), run dfs on random vertex of the last scc, and check if it can reach every other scc.
+
 """
 
 # NOTE there is a difference between tringly connected and transitive close for directedGraph but means same thing for unidrected graph
@@ -392,8 +393,10 @@ class KosarajuSCC(object):
     """
     # NOTE we dont need asyclic graph for reverse_postfix, it is only required for toplogical order
     for strongly components we need cycles, and there is differece in sstrongly connected and transitive closure
+
     find the reverse postfix of reverse graph
     traverse over reverse_postfix of topological sort and marked verteces same as undirected graph
+    
     >>> test_data = ((4, 2), (2, 3), (3, 2), (6, 0), (0, 1), (2, 0),
     ...              (11, 12), (12, 9), (9, 10), (9, 11), (7, 9), (10, 12),
     ...              (11, 4), (4, 3), (3, 5), (6, 8), (8, 6), (5, 4), (0, 5),
@@ -521,8 +524,8 @@ class Degrees(object):
                 self._outdegree[vertex] += 1
                 self._indegree[neighbour] += 1
         
-        self._sources = (k for k, v in self._indegree.items() if v == 0)
-        self._sinks = (k for k, v in self._outdegree.items() if v == 0)
+        self._sources = [k for k, v in self._indegree.items() if v == 0]
+        self._sinks = [k for k, v in self._outdegree.items() if v == 0]
         # A digraph where self-loops are allowed and every vertex has outdegree 1 is called a map
         self._is_map = len([k for k, v in self._outdegree.items() if v == 1]) == length
 
@@ -547,7 +550,7 @@ class Euler(object):
     """
     https://www.techiedelight.com/eulerian-path-directed-graph/
     Euler cycle(circuit) exists if graph is strongly connected, and all indegree and out degree for all the vertices are same
-    Euler path exisits if 2 of vertices has outdegree - indegree == 1
+    Euler path exisits if 2 of vertices has outdegree - indegree == 1 and indegree - outdegree == 1
     use 
     >>> test_data = ((4, 2), (2, 3), (3, 2), (6, 0), (0, 1), (2, 0),
     ...              (11, 12), (12, 9), (9, 10), (9, 11), (7, 9), (10, 12),
