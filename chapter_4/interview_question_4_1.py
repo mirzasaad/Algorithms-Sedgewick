@@ -162,8 +162,6 @@ class Eulerian(object):
     A Graph must have nodes with even degree and odd degree. All the odd degree nodes are either start or end but all the even degree node will be only intermediate nodes.
     But in case when all the nodes has even degree, then it contains the Eulerian Tour, as we we'll start from some node and will end to this same node, as we need to consume all the edges.
     
-    
-    
     >>> G = Graph()
     >>> test_data = [(1, 0), (0, 2), (2, 1), (0, 3), (3, 4), (4, 0)]
     >>> for a, b in test_data:
