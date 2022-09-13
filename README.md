@@ -31,3 +31,4 @@ https://www.geeksforgeeks.org/hamiltonian-cycle-backtracking-6/
 there is a difference between tringly connected and transitive close for directedGraph but means same thing for unidrected graph
 
 look into TopologicalWithDegree
+look into DynamicMST Book exercises
