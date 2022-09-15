@@ -168,10 +168,6 @@ class ShortestDirectedCycleV2(object):
     def has_cycle(self):
         return self._cycles and len(self._cycles) > 0
 
-
-
-
-
 class Hamiltonian(object):
     """
     
