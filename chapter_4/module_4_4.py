@@ -493,6 +493,42 @@ class EdgeWeightedDirectedCycle(object):
     def cycle(self):
         return self._cycle
 
+# function bellmanFord(G, S)
+#   for each vertex V in G
+#     distance[V] <- infinite
+#       previous[V] <- NULL
+#   distance[S] <- 0
+
+#   for each vertex V in G				
+#     for each edge (U,V) in G
+#       tempDistance <- distance[U] + edge_weight(U, V)
+#       if tempDistance < distance[V]
+#         distance[V] <- tempDistance
+#         previous[V] <- U
+
+#   for each edge (U,V) in G
+#     If distance[U] + edge_weight(U, V) < distance[V}
+#       Error: Negative Cycle Exists
+
+#   return distance[], previous[]
+
+class BellmanFordSPNonQueueBased(ShortestPath):
+    def __init__(self, graph: EdgeWeightedDigraph, source):
+        self._dist_to = dict((v, INFINITE_POSITIVE_NUMBER) for v in graph.vertices())
+        self._dist_to[source] = 0
+        self._has_negative_cycle = False
+        self._edge_to = {source: None}
+
+        for vertex in graph.vertices():
+            self.relax_vertex(graph, vertex)
+
+        for edge in graph.edges():
+            if self._dist_to[edge.start] + edge.weight < self.dist_to[edge.end]:
+                self._has_negative_cycle = True
+
+    def has_negative_cycle(self):
+        return self._has_negative_cycle
+        
 class BellmanFordSP(ShortestPath):
 
     """
