@@ -78,7 +78,6 @@ class DFSIterative():
             if not self._marked[neighbour]:
                 self.dfs(graph, neighbour, result)
 
-
 class GraphProperties(object):
     """
     Question 2
