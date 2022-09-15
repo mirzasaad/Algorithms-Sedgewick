@@ -103,6 +103,21 @@ class EdgeWeightedDigraph(object):
         self._vertices.add(edge.end)
         self._edges_size += 1
 
+    def reverse_graph(self):
+        reverse_graph = EdgeWeightedDigraph()
+
+        for vertex in self.vertices():
+            for edge in self.adjacent_edges(vertex):
+                reverse_graph.add_edge(edge)
+
+        return reverse_graph
+
+    def remove_edge(self, edge):
+        self._adj[edge.start].add(edge)
+        self._vertices.add(edge.start)
+        self._vertices.add(edge.end)
+        self._edges_size += 1
+
     def adjacent_edges(self, vertex):
         return self._adj[vertex]
 
@@ -167,7 +182,7 @@ class EdgeWeightedMatrix(object):
         self._adj[source][dist] = weight
         self._vertices.add(source)
         self._vertices.add(dist)
-
+    
     def adjacent_edges(self, vertex):
         return self._adj[vertex]
 
