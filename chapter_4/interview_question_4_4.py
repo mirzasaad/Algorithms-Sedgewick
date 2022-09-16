@@ -102,7 +102,6 @@ class SecondShortestPath(object):
     def has_second_shorted_path(self):
         return self._has_socond_shortest_path
     
-
 class SkippablePath(object):
     """
     use a modified version of Dijkstra's algorithm, maintain an array of max weight of path from s to every vertex, 
