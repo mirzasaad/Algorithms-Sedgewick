@@ -1,3 +1,7 @@
+from collections import defaultdict, deque, namedtuple
+import doctest
+from random import uniform
+from typing import List
 
 # NOTE
 """
@@ -17,13 +21,6 @@ do a augment search, "look for forward edge which is not full and backward edge 
 
 avoid the bad case, look at book or coursera for reference
 """
-
-
-from collections import defaultdict, deque, namedtuple
-import doctest
-from random import uniform
-from typing import List
-
 
 class FlowEdge(object):
     """
@@ -106,6 +103,32 @@ class FlowEdge(object):
             raise Exception('Flow is negative')
         if self._capacity < self._flow:
             raise Exception('Flow Exceeds Capacity')
+
+    def __cmp__(self, other):
+        if self.capacity() - self.flow() < other.capacity() - other.flow():
+            return -1
+        elif self.capacity() - self.flow() > other.capacity() - other.flow():
+            return 1
+        else:
+            return 0
+
+    def __eq__(self, other):
+        return self.__cmp__(other) == 0
+
+    def __ne__(self, other):
+        return self.__cmp__(other) != 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __ge__(self, other):
+        return self.__cmp__(other) >= 0
+
+    def __le__(self, other):
+        return self.__cmp__(other) <= 0
 
     def __repr__(self):
         return "%s ==(%s/%s)==> %s" % (self.v, self._flow, self._capacity, self.w)
