@@ -32,3 +32,6 @@ there is a difference between tringly connected and transitive close for directe
 
 look into TopologicalWithDegree
 look into DynamicMST Book exercises
+
+
+https://algs4.cs.princeton.edu/63suffix/Manber.java.html missing
