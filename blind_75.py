@@ -579,7 +579,7 @@ def maxProfit(prices: List[int]) -> int:
     """
 
     max_profit = 0
-    min_so_far = (1 << 63) - 1
+    min_so_far = (-1 << 63)
 
     for price in prices:
         min_so_far = min(min_so_far, price)
@@ -664,9 +664,9 @@ def characterReplacement(s: str, k: int) -> int:
         distance = end - start + 1
 
         while distance - most_common > k:
-            distance = end - start + 1
             count[s[start]] -= 1
             start += 1
+            distance = end - start + 1
 
         length = max(length, end - start + 1)
 
@@ -744,7 +744,7 @@ def isValid(s: str) -> bool:
         elif not stack or lookup[stack.pop()] != bracket:
             return False
 
-    return True
+    return not stack
 
 
 def searchFast(nums: List[int], target: int) -> int:
@@ -810,13 +810,13 @@ def search(nums: List[int], target: int) -> int:
 
             if mid < hi and nums[mid] > nums[mid + 1]:
                 return mid + 1
-            if mid < lo and nums[mid] < nums[mid - 1]:
+            if lo < mid and nums[mid] < nums[mid - 1]:
                 return mid
 
-            if nums[lo] >= nums[mid]:
-                hi = mid - 1
-            else:
+            if nums[mid] >= nums[hi]:
                 lo = mid + 1
+            else:
+                hi = mid - 1
 
         return 0
 
@@ -1237,8 +1237,8 @@ def isSubtreeFast(root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool
 
         return node.merkel
 
-    __merkel(root)
-    __merkel(subRoot)
+    root.merkel = __merkel(root)
+    subRoot.merkel = __merkel(subRoot)
 
     def dfs(root: Optional[TreeNode], subRoot: Optional[TreeNode]):
         if not root:
@@ -1371,7 +1371,7 @@ def kthSmallestRecursive(root: Optional[TreeNode], k: int) -> int:
     return the kth smallest value (1-indexed) of all the values of the nodes in the tree.
     """
 
-    result = None
+    result = []
 
     def kthSmallest(node: Optional[TreeNode]):
         if not node:
@@ -1380,7 +1380,7 @@ def kthSmallestRecursive(root: Optional[TreeNode], k: int) -> int:
         kthSmallest(node.left)
         k -= 1
         if k == 0:
-            result = node
+            result[0] = node
             return
         kthSmallest(node.right)
 
@@ -1511,17 +1511,17 @@ def maxPathSum(root: Optional[TreeNode]) -> int:
         left_max = max(0, left)
         right_max = max(0, right)
 
-        max_without_split = node.val + left_max + right_max
+        max_with_split = node.val + left_max + right_max
         max_node = node.val
         max_node_plus_left = node.val + left_max
         max_node_plus_right = node.val + right_max
 
-        result[0] = max(result[0], max_without_split, max_node,
+        result[0] = max(result[0], max_with_split, max_node,
                         max_node_plus_left, max_node_plus_right)
 
-        max_with_split = node.val + max(left_max, right_max)
+        max_without_split = node.val + max(left_max, right_max)
 
-        return max_with_split
+        return max_without_split
 
     __maxPathSum(root)
 
@@ -1569,7 +1569,7 @@ class Codec:
 
         def buildTree():
             if not preorder:
-                return
+                return None
 
             item = preorder.popleft()
 
@@ -1707,7 +1707,7 @@ class WordDictionary:
 
             is_wild_card = letter == '.'
 
-            if is_wild_card:
+            if not is_wild_card:
                 __search(node.children.get(letter), word, d + 1)
             else:
                 for key in node.children.keys():
@@ -1823,13 +1823,13 @@ class MedianFinder:
         if len(self._maxPQ) == len(self._maxPQ):
             return
 
-        if abs(len(self._maxPQ) - len(self._minPQ)) >= 1:
+        if abs(len(self._maxPQ) - len(self._minPQ)) <= 1:
             return
 
         if len(self._maxPQ) > len(self._minPQ):
-            heapq._heappush_max(self._maxPQ, heapq.heappop(self._maxPQ))
+            heapq._heappush_max(self._maxPQ, heapq.heappop(self._minPQ))
         else:
-            heapq.heappush(self._minPQ, heapq._heappop_max(self._minPQ))
+            heapq.heappush(self._minPQ, heapq._heappop_max(self._maxPQ))
 
 
 def combinationSum(candidates: List[int], target: int) -> List[List[int]]:
@@ -2196,56 +2196,6 @@ def canFinishDeclaritive(numCourses: int, prerequisites: List[List[int]]) -> boo
             return False
     return True
 
-def canFinishDeclaritive(numCourses: int, prerequisites: List[List[int]]) -> bool:
-    """
-    Question 45
-
-    Course Schedule
-
-    There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. 
-    You are given an array prerequisites where prerequisites[i] = [ai, bi] 
-    indicates that you must take course bi first if you want to take course ai.
-    For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
-    Return true if you can finish all courses. Otherwise, return false.
-    """
-    class State(Enum):
-        TO_VISIT = 0
-        VISITING = 1
-        VISITED = 2
-    
-    def build_graph():
-        graph = collections.defaultdict(GraphNode)
-        for src, des in prerequisites:
-            node = GraphNode(src);
-            node.neighbors = [des]
-
-            graph[src] = node
-
-        return graph
-
-    def dfs(node: GraphNode):
-        if visited.get(node.val, State.TO_VISIT) == State.VISITED:
-            return False
-
-        visited[node.val] = State.VISITED
-
-        for w in graph[node.val]:
-            if not dfs(w): return False
-        
-        visited[node.val] = State.TO_VISIT
-
-        return True
-
-
-    graph = build_graph()
-    visited = collections.defaultdict(State)
-
-    for node in graph:
-        if not dfs(node):
-            return False
-
-    return True
-
 def countComponenets():
     """
     Question 46
@@ -2254,6 +2204,58 @@ def countComponenets():
     """
     pass
 
+
+def alien_order(words: List[str]):
+    class State(Enum):
+        TO_VISIT = 0
+        VISITING = 1
+        VISITED = 2
+        
+    graph = { character: set() for word in words for character in  word }
+    
+    for i in range(len(words) - 1):
+        w1, w2, = words[i], words[i + 1]
+        min_len = min(len(w1), len(w2))
+
+        if len(w1) < len(w2) and w1[:min_len] == w2[:min_len]:
+            return ""
+
+        for j in range(min_len):
+            if w1[j] != w1[j]:
+                graph[w1[j]].add(w2[j])
+                break
+
+    def dfs(vertex):
+        if visited[vertex] == State.VISITING:
+            return True
+
+        if visited[vertex] == State.VISITED:
+            return False
+
+        visited[vertex] = State.VISITED
+
+        for neighbour in graph[vertex]:
+            if dfs(neighbour):
+                return True
+
+        visited[vertex] = State.VISITED
+        
+        reverse_postfix.append(vertex)
+
+        return False
+    
+    visited = collections.defaultdict(int)
+    reverse_postfix = []
+
+    vertexes = list(graph.keys())
+
+    for vertex in vertexes:
+        if dfs(vertex):
+            return ""
+
+    reverse_postfix.reverse()
+        
+    return ''.join(reverse_postfix)
 # missing graph problems
 
 def climbStairs(n: int, cache = {}) -> int:
@@ -3361,3 +3363,43 @@ print(matrix)
 # for i in matrix:
 #     for j in i:
 #         print(j)
+
+# print(canFinishDeclaritive(numCourses = 2, prerequisites = [[1,0]]))
+
+def rabinKarp(text, pattern):
+    radix = 256
+    q = 997
+    honer = pow(radix, len(pattern) - 1) % q
+
+    p_hash = 0
+    t_hash = 0
+    m, n = len(pattern), len(text)
+
+    for i in range(m):
+        p_hash = (radix * p_hash + ord(pattern[i])) % q;
+        t_hash = (radix * t_hash + ord(text[i])) % q;
+
+    for i in range(n - m + 1):
+        if p_hash == t_hash:
+            return (i, i + m)
+        if i < n - m:
+            t_hash = (radix * (t_hash - ord(text[i]) * honer) + ord(text[i + m])) % q;
+
+def rabinKarp(text, pattern):
+    q = 997
+    radix = 256
+    m, n = len(pattern), len(text)
+    honer = pow(radix, m - 1) % q
+    p_hash, t_hash = 0, 0
+
+    for i in range(m):
+        p_hash = (radix * p_hash + ord(pattern[i])) % q
+        t_hash = (radix * t_hash + ord(text[i])) % q
+
+    for i in range(n - m + 1):
+        if p_hash == t_hash:
+            return (i, i + m - 1)
+        if i < n - m:
+            t_hash = ((honer * radix (t_hash - ord(text[i]))) + ord(text[i + m])) % 1
+    
+    return None
